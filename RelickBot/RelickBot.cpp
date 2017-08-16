@@ -7,6 +7,7 @@
 #include <sol.hpp>
 
 std::stringstream sbuf;
+sol::state lua;
 
 std::string escapeJson(const std::string& s) {
 	std::ostringstream o;
@@ -45,6 +46,30 @@ std::string escapeJson(const std::string& s) {
 	return o.str();
 }
 
+std::string unescapeLua(const std::string& s) {
+	std::ostringstream o;
+	for (int i = 0; i < ((int)s.size()); ++i) {
+		if (s[i] == '\\') {
+			if (s[i + 1] == '\\') {
+				o << '\\';
+				++i;
+			} else if (s[i + 1] == '"') {
+				o << '\"';
+				++i;
+			} else if (s[i + 1] == 'n') {
+				o << '\n';
+				++i;
+			} else if (s[i + 1] == 't') {
+				o << '\t';
+				++i;
+			}
+		} else {
+			o << s[i];
+		}
+	}
+	return o.str();
+}
+
 int l_my_print(std::string s) {
 	sbuf << s;
 	return 0;
@@ -53,6 +78,15 @@ int l_my_print(std::string s) {
 struct RelickBot : public SleepyDiscord::DiscordClient {
 	using SleepyDiscord::DiscordClient::DiscordClient;
 	void relickBotSetup() {
+		lua = sol::state();
+		lua.open_libraries(sol::lib::base, sol::lib::package);
+		lua.set_function("newprint", l_my_print);
+		static std::string setscr = R"(_print = print
+function print(s)
+	newprint(s)
+	_print(s)
+end)";
+		lua.script(setscr);
 	}
 
 	SleepyDiscord::Message embedSendMessage(std::string channel_id, std::string message, bool cleanupmessage) {
@@ -76,34 +110,48 @@ struct RelickBot : public SleepyDiscord::DiscordClient {
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
-		if (message.startsWith("=lua ")) {
-			sol::state lua;
-			lua.open_libraries(sol::lib::base, sol::lib::package);
-			lua.set_function("newprint", l_my_print);
-			static std::string setscr = R"(_print = print
-function print(s)
-	newprint(s)
-	_print(s)
-end)";
-			lua.script(setscr);
-			std::string script = message.content;
-			script.erase(0, 5);
-			auto result = lua.script(script, [this, message](lua_State* L, sol::protected_function_result pfr) {
-				// pfr will contain things that went wrong, for either loading or executing the script
-				// Can throw your own custom error
-				// You can also just return it, and let the call-site handle the error if necessary.
-				return pfr;
-			});
-			std::string output = sbuf.str();
-			if (!result.valid()) {
-				output = result;
-			}
-			sbuf.clear();
-			sbuf.str(std::string());
-			if (output.empty()) {
-				embedSendMessage(message.channel_id, "No error, no output", false);
-			} else {
-				embedSendMessage(message.channel_id, output, true);
+		if (message.author.username == "relick") {
+			if (message.startsWith("=ep ```lua")) {
+				std::string script = message.content;
+				script.erase(0, 10);
+				script.erase(((int)script.size()) - 3, 3);
+				script = unescapeLua(script);
+				auto result = lua.script(script, [this, message](lua_State* L, sol::protected_function_result pfr) {
+					// pfr will contain things that went wrong, for either loading or executing the script
+					// Can throw your own custom error
+					// You can also just return it, and let the call-site handle the error if necessary.
+					return pfr;
+				});
+				std::string output = sbuf.str();
+				if (!result.valid()) {
+					output = result;
+				}
+				sbuf.clear();
+				sbuf.str(std::string());
+				if (output.empty()) {
+					embedSendMessage(message.channel_id, "No error, no output", false);
+				} else {
+					embedSendMessage(message.channel_id, output, true);
+				}
+			} else if (message.startsWith("=luarefresh")) {
+				relickBotSetup();
+			} else if (message.startsWith("=ef ```lua")) {
+				std::string script = message.content;
+				script.erase(0, 10);
+				script.erase(((int)script.size()) - 3, 3);
+				script = unescapeLua(script);
+				auto result = lua.do_string(script);
+				std::string output = sbuf.str();
+				if (result.valid()) {
+					output = result;
+				}
+				sbuf.clear();
+				sbuf.str(std::string());
+				if (output.empty()) {
+					embedSendMessage(message.channel_id, "No error, no output", false);
+				} else {
+					embedSendMessage(message.channel_id, output, true);
+				}
 			}
 		}
 	}
