@@ -8,21 +8,44 @@
 
 std::stringstream sbuf;
 
-static int l_my_print(lua_State* L) {
-	int nargs = lua_gettop(L);
-
-	for (int i = 1; i <= nargs; i++) {
-		if (lua_isstring(L, i)) {
-			/* Pop the next arg using lua_tostring(L, i) and do your print */
-		} else {
-			/* Do something with non-strings if you like */
+std::string escapeJson(const std::string& s) {
+	std::ostringstream o;
+	for (auto c : s) {
+		switch (c) {
+		case '"':
+			o << "\\\"";
+			break;
+		case '\\':
+			o << "\\\\";
+			break;
+		case '\b':
+			o << "\\b";
+			break;
+		case '\f':
+			o << "\\f";
+			break;
+		case '\n':
+			o << "\\n";
+			break;
+		case '\r':
+			o << "\\r";
+			break;
+		case '\t':
+			o << "\\t";
+			break;
+		default:
+			if ('\x00' <= c && c <= '\x1f') {
+				o << "\\u" << std::hex << std::setw(4) << std::setfill('0')
+					<< static_cast<int>(c);
+			} else {
+				o << c;
+			}
 		}
 	}
-
-	return 0;
+	return o.str();
 }
 
-static int l_my_print2(std::string s) {
+int l_my_print(std::string s) {
 	sbuf << s;
 	return 0;
 }
@@ -32,14 +55,37 @@ struct RelickBot : public SleepyDiscord::DiscordClient {
 	void relickBotSetup() {
 	}
 
+	SleepyDiscord::Message embedSendMessage(std::string channel_id, std::string message, bool cleanupmessage) {
+		int off = 0;
+		std::string cleanMess;
+		if (cleanupmessage) {
+			cleanMess = escapeJson(message);
+		} else {
+			cleanMess = message;
+		}
+		std::ostringstream mess;
+		mess << R"({
+	"embed": {
+		"description": ")" << cleanMess << R"(",
+		"color": 3447003,
+		"title": "Your code output"
+	}
+})";
+		std::string response = request(SleepyDiscord::RequestMethod::Post, path("channels/{channel.id}/messages", channel_id), mess.str()).text;
+		return SleepyDiscord::Message(&response);
+	}
+
 	void onMessage(SleepyDiscord::Message message) {
 		if (message.startsWith("=lua ")) {
 			sol::state lua;
 			lua.open_libraries(sol::lib::base, sol::lib::package);
-			lua.set_function("newprint", l_my_print2);
-			static std::string setscr = R"(newprint('hello'))";
+			lua.set_function("newprint", l_my_print);
+			static std::string setscr = R"(_print = print
+function print(s)
+	newprint(s)
+	_print(s)
+end)";
 			lua.script(setscr);
-			//lua["print"] = sol::overload(l_my_print);
 			std::string script = message.content;
 			script.erase(0, 5);
 			auto result = lua.script(script, [this, message](lua_State* L, sol::protected_function_result pfr) {
@@ -48,33 +94,16 @@ struct RelickBot : public SleepyDiscord::DiscordClient {
 				// You can also just return it, and let the call-site handle the error if necessary.
 				return pfr;
 			});
-			sendMessage(message.channel_id, "[string t]:1: '=' expected near '<eof>'");
 			std::string output = sbuf.str();
 			if (!result.valid()) {
 				output = result;
 			}
 			sbuf.clear();
+			sbuf.str(std::string());
 			if (output.empty()) {
-				sendMessage(message.channel_id, "No error, no output");
+				embedSendMessage(message.channel_id, "No error, no output", false);
 			} else {
-				bool done = false;
-				int index = 0;
-				while (!done) {
-					if (index >= ((int)output.length())) {
-						done = true;
-						break;
-					}
-					std::stringstream ss;
-					for (int i = index; i < ((int)output.length()); ++i) {
-						++index;
-						if (output[i] != '\n')
-							ss << output[i];
-						else
-							break;
-					}
-					if (!ss.str().empty())
-						sendMessage(message.channel_id, ss.str());
-				}
+				embedSendMessage(message.channel_id, output, true);
 			}
 		}
 	}
