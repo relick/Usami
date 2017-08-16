@@ -1,0 +1,2 @@
+# relickbot
+personal discord bot
