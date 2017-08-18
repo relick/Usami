@@ -5,6 +5,7 @@
 #include <sstream>
 #include <websocketpp_websocket.h>
 #include <sol.hpp>
+#include <fstream>
 
 std::stringstream sbuf;
 sol::state lua;
@@ -50,18 +51,27 @@ std::string unescapeLua(const std::string& s) {
 	std::ostringstream o;
 	for (int i = 0; i < ((int)s.size()); ++i) {
 		if (s[i] == '\\') {
-			if (s[i + 1] == '\\') {
+			switch (s[i + 1]) {
+			case '\\':
 				o << '\\';
 				++i;
-			} else if (s[i + 1] == '"') {
+				break;
+			case '"':
 				o << '\"';
 				++i;
-			} else if (s[i + 1] == 'n') {
+				break;
+			case 'n':
 				o << '\n';
 				++i;
-			} else if (s[i + 1] == 't') {
+				break;
+			case 't':
 				o << '\t';
 				++i;
+				break;
+			default:
+				o << '\\';
+				++i;
+				break;
 			}
 		} else {
 			o << s[i];
@@ -70,21 +80,37 @@ std::string unescapeLua(const std::string& s) {
 	return o.str();
 }
 
-int l_my_print(std::string s) {
-	sbuf << s;
+int l_my_print(sol::variadic_args va) {
+	for (auto v : va) {
+		std::string x = v.get<std::string>();
+		sbuf << x << ' ';
+	}
+	sbuf << std::endl;
 	return 0;
 }
 
 struct RelickBot : public SleepyDiscord::DiscordClient {
 	using SleepyDiscord::DiscordClient::DiscordClient;
+
+	std::vector<std::string> channels;
+	std::vector<std::string> users;
+
+	void addChannel(std::string x) {
+		channels.push_back(x);
+	}
+
+	void addUser(std::string x) {
+		users.push_back(x);
+	}
+
 	void relickBotSetup() {
 		lua = sol::state();
 		lua.open_libraries(sol::lib::base, sol::lib::package);
 		lua.set_function("newprint", l_my_print);
 		static std::string setscr = R"(_print = print
-function print(s)
-	newprint(s)
-	_print(s)
+function print(...)
+	newprint(...)
+	_print(...)
 end)";
 		lua.script(setscr);
 	}
@@ -101,7 +127,11 @@ end)";
 		mess << R"({
 	"embed": {
 		"description": ")" << cleanMess << R"(",
-		"color": 3447003,
+		"color": 3464018,
+		"author": {
+			"name": "Lua",
+			"icon_url": "http://d2.alternativeto.net/dist/icons/lua_102040.png?width=200&height=200&mode=crop&upscale=false"
+		},
 		"title": "Your code output"
 	}
 })";
@@ -110,47 +140,69 @@ end)";
 	}
 
 	void onMessage(SleepyDiscord::Message message) {
-		if (message.author.username == "relick") {
-			if (message.startsWith("=ep ```lua")) {
-				std::string script = message.content;
-				script.erase(0, 10);
-				script.erase(((int)script.size()) - 3, 3);
-				script = unescapeLua(script);
-				auto result = lua.script(script, [this, message](lua_State* L, sol::protected_function_result pfr) {
-					// pfr will contain things that went wrong, for either loading or executing the script
-					// Can throw your own custom error
-					// You can also just return it, and let the call-site handle the error if necessary.
-					return pfr;
-				});
-				std::string output = sbuf.str();
-				if (!result.valid()) {
-					output = result;
+		if (message.startsWith("=whitelist")) {
+			if (message.author.id == users[0]) {
+				std::cout << "Channel ID: " << message.channel_id << std::endl;
+				addChannel(message.channel_id);
+				std::string mess = message.content;
+				mess.erase(0, 10);
+				if (mess.size() != 0) {
+					embedSendMessage(message.channel_id, message.author.id, true);
 				}
-				sbuf.clear();
-				sbuf.str(std::string());
-				if (output.empty()) {
-					embedSendMessage(message.channel_id, "No error, no output", false);
-				} else {
-					embedSendMessage(message.channel_id, output, true);
-				}
-			} else if (message.startsWith("=luarefresh")) {
-				relickBotSetup();
-			} else if (message.startsWith("=ef ```lua")) {
-				std::string script = message.content;
-				script.erase(0, 10);
-				script.erase(((int)script.size()) - 3, 3);
-				script = unescapeLua(script);
-				auto result = lua.do_string(script);
-				std::string output = sbuf.str();
-				if (result.valid()) {
-					output = result;
-				}
-				sbuf.clear();
-				sbuf.str(std::string());
-				if (output.empty()) {
-					embedSendMessage(message.channel_id, "No error, no output", false);
-				} else {
-					embedSendMessage(message.channel_id, output, true);
+			}
+		} else {
+			for (std::string c : channels) {
+				if (c == message.channel_id) {
+					if (message.startsWith("=ep ```lua")) {
+						std::string script = message.content;
+						script.erase(0, 10);
+						script.erase(((int)script.size()) - 3, 3);
+						script = unescapeLua(script);
+						auto result = lua.script(script, [this, message](lua_State* L, sol::protected_function_result pfr) {
+							// pfr will contain things that went wrong, for either loading or executing the script
+							// Can throw your own custom error
+							// You can also just return it, and let the call-site handle the error if necessary.
+							return pfr;
+						});
+						std::string output = sbuf.str();
+						if (!result.valid()) {
+							output = result;
+						}
+						sbuf.clear();
+						sbuf.str(std::string());
+						if (output.empty()) {
+							embedSendMessage(message.channel_id, "No error, no output.", false);
+						} else {
+							embedSendMessage(message.channel_id, "```" + output + "```", true);
+						}
+					} else if (message.startsWith("=luareset")) {
+						relickBotSetup();
+						embedSendMessage(message.channel_id, "Your lua state has been reset!", true);
+					} else if (message.startsWith("=ef ```lua")) {
+						std::string script = message.content;
+						script.erase(0, 10);
+						script.erase(((int)script.size()) - 3, 3);
+						script = unescapeLua(script);
+						auto result = lua.do_string(script);
+						std::string output = sbuf.str();
+						if (result.valid()) {
+							output = result;
+						}
+						sbuf.clear();
+						sbuf.str(std::string());
+						if (output.empty()) {
+							embedSendMessage(message.channel_id, "No error, no output.", false);
+						} else {
+							embedSendMessage(message.channel_id, "```" + output + "```", true);
+						}
+					} else if (message.startsWith("=help")) {
+						std::string mess = R"(The bot has the following commands:
+```=ef```
+This command executes a block of lua code as if it was a function (contained in \`\`\`lua ... \`\`\` code blocks), and the bot outputs the return value.
+```=ep```
+This command executes a block of lua code (contained in \`\`\`lua ... \`\`\` code blocks), and the bot outputs anything sent to the console with `print()`.)";
+						embedSendMessage(message.channel_id, mess, true);
+					}
 				}
 			}
 		}
@@ -158,7 +210,24 @@ end)";
 };
 
 int main() {
-	RelickBot client("MzQ3Mzk2ODQ3NzY3MjU3MTA4.DHXykw.QnK42oQ8nqDp3sPQP6_VbbRbTJQ", 2);
-	client.relickBotSetup();
-	client.run();
+	std::ifstream file;
+	file.open("botdata.txt");
+	if (file) {
+		std::string x;
+		file >> x;
+		RelickBot client(x, 2);
+		client.relickBotSetup();
+		while (file >> x) {
+			if (x[0] == 'c') {
+				x.erase(0, 1);
+				client.addChannel(x);
+			} else {
+				x.erase(0, 1);
+				client.addUser(x);
+			}
+		}
+		file.close();
+		client.run();
+	file.close();
+	}
 }

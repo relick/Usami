@@ -98,7 +98,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sleepy_discord.lib;libcurl_a.lib;libssl32MT.lib;libcrypto32MT.lib;lua51.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sleepy_discord.lib;libcurl_a.lib;libssl32MD.lib;libcrypto32MD.lib;lua51.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\peted\Desktop\bot stuff\yourWaifu-sleepy-discord-725ce9e\deps\cpr\opt\curl\builds\libcurl-vc15-x86-release-static-ipv6-sspi-winssl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
