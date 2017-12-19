@@ -13,7 +13,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.server.id == '298845318454312962':
+    if message.server.id == '298845318454312962' and message.client.id != '347396847767257108':
         if message.content.startswith('boop'):
             await client.send_message(message.channel, "boop")
 
