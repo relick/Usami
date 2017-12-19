@@ -6,6 +6,8 @@
 #include <websocketpp_websocket.h>
 #include <sol.hpp>
 #include <fstream>
+#include <chrono>
+#include <future>
 
 std::stringstream sbuf;
 sol::state lua;
@@ -89,6 +91,10 @@ int l_my_print(sol::variadic_args va) {
 	return 0;
 }
 
+sol::protected_function_result nya(std::string s) {
+	return lua.do_string(s);
+}
+
 struct RelickBot : public SleepyDiscord::DiscordClient {
 	using SleepyDiscord::DiscordClient::DiscordClient;
 
@@ -158,23 +164,23 @@ end)";
 						script.erase(0, 10);
 						script.erase(((int)script.size()) - 3, 3);
 						script = unescapeLua(script);
-						auto result = lua.script(script, [this, message](lua_State* L, sol::protected_function_result pfr) {
-							// pfr will contain things that went wrong, for either loading or executing the script
-							// Can throw your own custom error
-							// You can also just return it, and let the call-site handle the error if necessary.
-							return pfr;
-						});
-						std::string output = sbuf.str();
-						if (!result.valid()) {
-							output = result;
-						}
-						sbuf.clear();
-						sbuf.str(std::string());
-						if (output.empty()) {
-							embedSendMessage(message.channel_id, "No error, no output.", false);
-						} else {
-							embedSendMessage(message.channel_id, "```" + output + "```", true);
-						}
+						//std::future<sol::protected_function_result> result = std::async(lua.script, script, [](lua_State* L, sol::protected_function_result pfr) { return pfr; });
+						//std::chrono::milliseconds span(100);
+						//if (result.wait_for(span) == std::future_status::timeout) {
+						//	embedSendMessage(message.channel_id, "Timed out!", false);
+						//} else {
+							std::string output = sbuf.str();
+							//if (!result.get().valid()) {
+							//	output = result.get();
+							//}
+							sbuf.clear();
+							sbuf.str(std::string());
+							if (output.empty()) {
+								embedSendMessage(message.channel_id, "No error, no output.", false);
+							} else {
+								embedSendMessage(message.channel_id, "```" + output + "```", true);
+							}
+						//}
 					} else if (message.startsWith("=luareset")) {
 						relickBotSetup();
 						embedSendMessage(message.channel_id, "Your lua state has been reset!", true);
@@ -183,17 +189,22 @@ end)";
 						script.erase(0, 10);
 						script.erase(((int)script.size()) - 3, 3);
 						script = unescapeLua(script);
-						auto result = lua.do_string(script);
-						std::string output = sbuf.str();
-						if (result.valid()) {
-							output = result;
-						}
-						sbuf.clear();
-						sbuf.str(std::string());
-						if (output.empty()) {
-							embedSendMessage(message.channel_id, "No error, no output.", false);
+						std::future<sol::protected_function_result> result = std::async(nya, script);
+						std::chrono::milliseconds span(100);
+						if (result.wait_for(span) == std::future_status::timeout) {
+							embedSendMessage(message.channel_id, "Timed out!", false);
 						} else {
-							embedSendMessage(message.channel_id, "```" + output + "```", true);
+							std::string output = sbuf.str();
+							if (result.valid()) {
+								output = result.get();
+							}
+							sbuf.clear();
+							sbuf.str(std::string());
+							if (output.empty()) {
+								embedSendMessage(message.channel_id, "No error, no output.", false);
+							} else {
+								embedSendMessage(message.channel_id, "```" + output + "```", true);
+							}
 						}
 					} else if (message.startsWith("=help")) {
 						std::string mess = R"(The bot has the following commands:
@@ -228,6 +239,5 @@ int main() {
 		}
 		file.close();
 		client.run();
-	file.close();
 	}
 }
