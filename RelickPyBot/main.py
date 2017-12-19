@@ -14,8 +14,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.server.id == '298845318454312962':
-        if message.content.startswith('=makedate'):
-            pass
+        if message.content.startswith('boop'):
+            await client.send_message(message.channel, "boop")
 
 if __name__ == "__main__":
     with open('token') as fi:
