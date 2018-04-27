@@ -54,8 +54,8 @@ async def on_message(message):
             stats.append(summy)
             summy = 0
             del temp[:]
-        em = discord.Embed(title='5e Stat Rolls', description='{0} {1} {2} {3} {4} {5}'.format(stats[0], stats[1], stats[2], stats[3], stats[4], stats[5]), colour=0x34DB52)
-        em.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+        em = discord.Embed(description='`{0} {1} {2} {3} {4} {5}`'.format(stats[0], stats[1], stats[2], stats[3], stats[4], stats[5]), colour=0x34DB52)
+        em.set_author(name='5e Stat Rolls', icon_url=message.author.avatar_url)
         await client.send_message(message.channel, embed=em)
     
     if message.server and message.server.id == '298845318454312962':
