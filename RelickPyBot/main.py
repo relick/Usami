@@ -1,7 +1,7 @@
 import discord
 import asyncio
 import sys
-import datetime
+import random
 
 counter = 0
 client = discord.Client()
@@ -40,8 +40,25 @@ async def on_message(message):
             #await client.send_message(message.channel, message.server.get_member("95649702455803904").mention)
         elif message.content.lower() == 'bot' or message.content.lower().startswith('bot ') or message.content.lower().endswith(' bot') or message.content.lower().find(' bot ') > -1:
             await client.send_message(message.channel, "been here all along :eyes:")
+
+    if message.content.startswith('~stats'):
+        random.seed()
+        stats = []
+        temp = []
+        summy = 0
+        for i in range(6):
+            for j in range(4):
+                temp.append(random.randint(1, 6))
+                summy += temp[j]
+            summy -= min(temp)
+            stats.append(summy)
+            summy = 0
+            del temp[:]
+        em = discord.Embed(title='5e Stat Rolls', description='{0} {1} {2} {3} {4} {5}'.format(stats[0], stats[1], stats[2], stats[3], stats[4], stats[5]), colour=0x34DB52)
+        em.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+        await client.send_message(message.channel, embed=em)
     
-    if message.server.id == '298845318454312962':
+    if message.server and message.server.id == '298845318454312962':
         if message.content.startswith('~schedule'):
             await client.send_message(message.channel, "@everyone | " + message.author.name + " wants to schedule a D&D game.")
             msat = await client.send_message(message.channel, "Please tick this if you can play on Saturday and cross it if you can't.")
