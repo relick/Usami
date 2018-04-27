@@ -85,15 +85,15 @@ async def on_reaction_add(reaction, user):
                     await client.remove_reaction(msun, "✅", user)
                     nya = True
                 suncountn.append(user.id)
-        if not nya and max(len(satcounty) + len(satcountn), len(suncounty) + len(suncountn)) == 5:
+        if not nya and max(len(satcounty) + len(satcountn), len(suncounty) + len(suncountn)) == 6:
             k = 0
-            if len(suncounty) == 5:
+            if len(suncounty) == 6:
                 k = await client.send_message(reaction.message.channel, "@everyone | Team 1, Sunday, 11am GMT.")
-            elif len(satcounty) == 5:
+            elif len(satcounty) == 6:
                 k = await client.send_message(reaction.message.channel, "@everyone | Team 1, Saturday, 11am GMT.")
-            elif len(suncounty) >= 3:
+            elif len(suncounty) >= 4:
                 k = await client.send_message(reaction.message.channel, "@everyone | Team N, Sunday, 11am GMT.")
-            elif len(satcounty) >= 3:
+            elif len(satcounty) >= 4:
                 k = await client.send_message(reaction.message.channel, "@everyone | Team N, Saturday, 11am GMT.")
             else:
                 k = await client.send_message(reaction.message.channel, "@everyone | Not enough players for a game. :frowning:")
