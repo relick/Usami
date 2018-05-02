@@ -60,7 +60,8 @@ async def on_message(message):
     
     if message.server and message.server.id == '298845318454312962':
         if message.content.startswith('~schedule'):
-            await client.send_message(message.channel, "@everyone | " + message.author.name + " wants to schedule a D&D game.")
+            p1 = await client.send_message(message.channel, "@everyone | " + message.author.name + " wants to schedule a D&D game.")
+            await client.pin_message(p1)
             msat = await client.send_message(message.channel, "Please tick this if you can play on Saturday and cross it if you can't.")
             await client.add_reaction(msat, "✅")
             await client.add_reaction(msat, "❌")
@@ -102,7 +103,7 @@ async def on_reaction_add(reaction, user):
                     await client.remove_reaction(msun, "✅", user)
                     nya = True
                 suncountn.append(user.id)
-        if not nya and max(len(satcounty) + len(satcountn), len(suncounty) + len(suncountn)) == 6:
+        if not nya and (len(satcounty) + len(satcountn) + len(suncounty) + len(suncountn)) == 12:
             k = 0
             if len(suncounty) == 6:
                 k = await client.send_message(reaction.message.channel, "@everyone | Team 1, Sunday, 11am GMT.")
