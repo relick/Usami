@@ -27,7 +27,7 @@ async def on_message(message):
     global msat
     global msun
     global prepping
-    if message.content.startswith('/hug'):
+    if message.content.lower().find('/hug') > -1:
         await client.send_message(message.channel, "༼ つ ◕_◕ ༽つ");
     if message.server and (message.server.id == '298845318454312962' or message.server.id == '167209063480950785') and message.author.id != '347396847767257108':
         if message.content.startswith('boop'):
