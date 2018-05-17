@@ -62,7 +62,7 @@ async def on_message(message):
     
     if message.server and message.server.id == '298845318454312962':
         if message.content.startswith('~schedule'):
-            p1 = await client.send_message(message.channel, "everyone | " + message.author.name + " wants to schedule a D&D game.")
+            p1 = await client.send_message(message.channel, "@everyone | " + message.author.name + " wants to schedule a D&D game.")
             await client.pin_message(p1)
             msat = await client.send_message(message.channel, "Please tick this if you can play on Saturday and cross it if you can't.")
             await client.add_reaction(msat, "✅")
@@ -108,17 +108,22 @@ async def on_reaction_add(reaction, user):
         if not nya and (len(satcounty) + len(satcountn) + len(suncounty) + len(suncountn)) == 12:
             k = 0
             if len(suncounty) == 6:
-                k = await client.send_message(reaction.message.channel, "everyone | Team 1, Sunday, 11am GMT.")
+                k = await client.send_message(reaction.message.channel, "@everyone | Team 1, Sunday, 11am GMT.")
             elif len(satcounty) == 6:
-                k = await client.send_message(reaction.message.channel, "everyone | Team 1, Saturday, 11am GMT.")
+                k = await client.send_message(reaction.message.channel, "@everyone | Team 1, Saturday, 11am GMT.")
             elif len(suncounty) >= 4:
-                k = await client.send_message(reaction.message.channel, "everyone | Team N, Sunday, 11am GMT.")
+                k = await client.send_message(reaction.message.channel, "@everyone | Team N, Sunday, 11am GMT.")
             elif len(satcounty) >= 4:
-                k = await client.send_message(reaction.message.channel, "everyone | Team N, Saturday, 11am GMT.")
+                k = await client.send_message(reaction.message.channel, "@everyone | Team N, Saturday, 11am GMT.")
             else:
-                k = await client.send_message(reaction.message.channel, "everyone | Not enough players for a game. :frowning:")
+                k = await client.send_message(reaction.message.channel, "@everyone | Not enough players for a game. :frowning:")
             await client.pin_message(k)
+            del satcounty[:]
+            del satcountn[:]
+            del suncounty[:]
+            del suncountn[:]
             prepping = False
+            satcounty.
 
 @client.event
 async def on_reaction_remove(reaction, user):
