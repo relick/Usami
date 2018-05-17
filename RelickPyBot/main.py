@@ -123,7 +123,6 @@ async def on_reaction_add(reaction, user):
             del suncounty[:]
             del suncountn[:]
             prepping = False
-            satcounty.
 
 @client.event
 async def on_reaction_remove(reaction, user):
