@@ -37,9 +37,8 @@ async def on_message(message):
             elif counter%5 == 0:
                 await client.send_message(message.channel, "pls stop")
             await client.send_message(message.channel, "boop")
-        elif message.content.lower().find('bug') > -1:
-            pass
-            #await client.send_message(message.channel, message.server.get_member("95649702455803904").mention)
+        elif message.content.lower().find('proto') > -1:
+            await client.send_message(message.channel, "༼ ◕_◕ ༽")
         elif message.content.lower() == 'bot' or message.content.lower().startswith('bot ') or message.content.lower().endswith(' bot') or message.content.lower().find(' bot ') > -1:
             await client.send_message(message.channel, "been here all along :eyes:")
 
