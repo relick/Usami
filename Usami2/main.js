@@ -114,9 +114,33 @@ client.on('message', msg => {
       }
         
     }
-  } else {
-    for(let rep of config.responses) {
-      
+  } else if(msg.author.id !== client.user.id) {
+    for(let rep of config.replies) {
+      let con = message.content;
+      let trig = rep.trigger;
+      if(!rep.caseSensitive) {
+        con = con.toLowerCase();
+      }
+      if(rep.requireSpace) {
+        trig = trig.concat(' ');
+      }
+      if(con.startsWith(rep.trigger)) {
+        msg.reply(rep.reply);
+        continue;
+      }
+      if(!rep.atStartOnly) {
+        if(rep.requireSpace) {
+          if(con.endsWith(' '.concat(rep.trigger)) || con.search(' '.concat(trig)) > -1) {
+            msg.reply(rep.reply);
+            continue;
+          }
+        } else {
+          if(con.search(trig) > -1) {
+            msg.reply(rep.reply);
+            continue;
+          }
+        }
+      }
     }
   }
 });
