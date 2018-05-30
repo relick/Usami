@@ -72,7 +72,7 @@ client.on('message', msg => {
     let params = conL.split(' ');
     if(params.length >= 0) {
       //add server to valid list
-      if(param[0] === 'addserver') {
+      if(params[0] === 'addserver') {
         if(validAdmin(msg, config) && msg.guild.available && !config.servers.includes(msg.guild.id)) {
           config.servers.push(msg.guild.id);
           msg.reply('Server whitelisted! Make sure to run `saveconfig`.');
@@ -92,20 +92,20 @@ client.on('message', msg => {
       }
       //admin commands
 
-      if(param[0] === 'reloadconfig') {
+      if(params[0] === 'reloadconfig') {
         config = getConfig();
         msg.reply('Config reloaded!');
         return;
       }
 
-      if(param[0] === 'saveconfig') {
+      if(params[0] === 'saveconfig') {
         saveConfig(config);
         msg.reply('Config saved!');
         return;
       }
 
       //remove server from valid list
-      if(param[0] === 'removeserver') {
+      if(params[0] === 'removeserver') {
         if(msg.guild.available) {
           config.servers = config.servers.filter(id => msg.guild.id !== id);
           msg.reply('Server blacklisted! Make sure to run `saveconfig`.');
