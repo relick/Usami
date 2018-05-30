@@ -70,6 +70,7 @@ client.on('message', msg => {
   if(checkPrefix(conL, config)) {
     conL = conL.slice(1); //remove prefix from future edits
     let params = conL.split(' ');
+    console.log(params);
     if(params.length >= 0) {
       //add server to valid list
       if(params[0] === 'addserver') {
@@ -85,14 +86,15 @@ client.on('message', msg => {
       }
       //general commands
 
-
+      console.log('hip');
 
       if(!validAdmin(msg, config)) {
         return;
       }
       //admin commands
-
+      console.log('ho');
       if(params[0] === 'reloadconfig') {
+        console.log('here');
         config = getConfig();
         msg.reply('Config reloaded!');
         return;
