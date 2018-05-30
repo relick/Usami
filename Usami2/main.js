@@ -79,14 +79,38 @@ client.on('message', msg => {
         }
         return;
       }
-      if(params[0] === 'reloadconfig' && validAdmin(msg, config)) {
+      if(params[0] === 'reload' && validAdmin(msg, config)) {
+        if(params.length > 1) {
+          if(params[1] === 'config') {
+            config = getConfig(config);
+            msg.reply('Config reloaded!');
+          } else if(params[1] === 'data') {
+            data = getData(data);
+            msg.reply('Data reloaded!');
+          }
+        } else {
+          config = getConfig(config);
+          data = getData(data);
+          msg.reply('Config and data reloaded!');
+        }
         config = getConfig();
         msg.reply('Config reloaded!');
         return;
       }
-      if(params[0] === 'saveconfig' && validAdmin(msg, config)) {
-        saveConfig(config);
-        msg.reply('Config saved!');
+      if(params[0] === 'save' && validAdmin(msg, config)) {
+        if(params.length > 1) {
+          if(params[1] === 'config') {
+            saveConfig(config);
+            msg.reply('Config saved!');
+          } else if(params[1] === 'data') {
+            saveData(data);
+            msg.reply('Data saved!');
+          }
+        } else {
+          saveConfig(config);
+          saveData(data);
+          msg.reply('Config and data saved!');
+        }
         return;
       }
 
