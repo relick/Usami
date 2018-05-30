@@ -80,14 +80,14 @@ client.on('message', msg => {
         return;
       }
 
-      if(!validServer(msg, conf)) {
+      if(!validServer(msg, config)) {
         return;
       }
       //general commands
 
 
 
-      if(!validAdmin(msg, conf)) {
+      if(!validAdmin(msg, config)) {
         return;
       }
       //admin commands
