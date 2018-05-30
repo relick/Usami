@@ -13,7 +13,7 @@ function getConfig() {
 
 function saveConfig(conf) {
   try {
-    fs.writeFileSync('config.json', JSON.stringify(conf), 'utf8');
+    fs.writeFileSync('config.json', JSON.stringify(conf, null, '    '), 'utf8');
   } catch (error) {
     console.log(error);
     console.log(conf);
@@ -32,7 +32,7 @@ function getData() {
 
 function saveData(dat) {
   try {
-    fs.writeFileSync('data.json', JSON.stringify(dat), 'utf8');
+    fs.writeFileSync('data.json', JSON.stringify(dat, null, '    '), 'utf8');
   } catch (error) {
     console.log(error);
     console.log(conf);
