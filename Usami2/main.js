@@ -125,22 +125,23 @@ client.on('message', msg => {
         trig = trig.concat(' ');
       }
       if(con.startsWith(rep.trigger)) {
-        msg.reply(rep.reply);
+        msg.channel.send(rep.reply);
         continue;
       }
       if(!rep.atStartOnly) {
         if(rep.requireSpace) {
           if(con.endsWith(' '.concat(rep.trigger)) || con.search(' '.concat(trig)) > -1) {
-            msg.reply(rep.reply);
+            msg.channel.send(rep.reply);
             continue;
           }
         } else {
           if(con.search(trig) > -1) {
-            msg.reply(rep.reply);
+            msg.channel.send(rep.reply);
             continue;
           }
         }
       }
+      //bottom of loop
     }
   }
 });
