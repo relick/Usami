@@ -70,14 +70,23 @@ client.on('message', msg => {
   if(checkPrefix(conL, config)) {
     conL = conL.slice(1); //remove prefix from future edits
     let params = conL.split(' ');
-    console.log(params);
     if(params.length >= 0) {
-      //add server to valid list
-      if(params[0] === 'addserver') {
-        if(validAdmin(msg, config) && msg.guild.available && !config.servers.includes(msg.guild.id)) {
+      //special admin commands to be used on any server
+      if(params[0] === 'addserver' && validAdmin(msg, config)) {
+        if(msg.guild.available && !config.servers.includes(msg.guild.id)) {
           config.servers.push(msg.guild.id);
           msg.reply('Server whitelisted! Make sure to run `saveconfig`.');
         }
+        return;
+      }
+      if(params[0] === 'reloadconfig' && validAdmin(msg, config)) {
+        config = getConfig();
+        msg.reply('Config reloaded!');
+        return;
+      }
+      if(params[0] === 'saveconfig' && validAdmin(msg, config)) {
+        saveConfig(config);
+        msg.reply('Config saved!');
         return;
       }
 
@@ -90,19 +99,7 @@ client.on('message', msg => {
       if(!validAdmin(msg, config)) {
         return;
       }
-      //admin commands
-
-      if(params[0] === 'reloadconfig') {
-        config = getConfig();
-        msg.reply('Config reloaded!');
-        return;
-      }
-
-      if(params[0] === 'saveconfig') {
-        saveConfig(config);
-        msg.reply('Config saved!');
-        return;
-      }
+      //not special admin commands
 
       //remove server from valid list
       if(params[0] === 'removeserver') {
@@ -115,6 +112,9 @@ client.on('message', msg => {
         
     }
   } else if(msg.author.id !== client.user.id) {
+    if(!validServer(msg, config)) {
+      return;
+    }
     for(let rep of config.replies) {
       let con = msg.content;
       let trig = rep.trigger;
