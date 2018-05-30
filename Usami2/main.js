@@ -68,9 +68,8 @@ function makeEmb(msg) {
 client.on('message', msg => {
   let conL = msg.content.toLowerCase();
   if(checkPrefix(conL, config)) {
-    conL.slice(1); //remove prefix from future edits
+    conL = conL.slice(1); //remove prefix from future edits
     let params = conL.split(' ');
-    console.log(params);
     if(params.length >= 0) {
       //add server to valid list
       if(params[0] === 'addserver') {
