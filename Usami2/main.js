@@ -61,41 +61,63 @@ function checkPrefix(conL, conf) {
   return false;
 }
 
+function makeEmb(msg) {
+  return new Discord.RichEmbed({author: msg.author, color: 0x34DB52});
+}
+
 client.on('message', msg => {
   let conL = msg.content.toLowerCase();
-    if(checkPrefix(conL, config)) {
-      conL.slice(1); //remove prefix from future edits
-      let params = conL.split(' ');
-      if(params.length >= 0) {
-        //add server to valid list
-        if(param[0] === 'addserver' && validAdmin(msg, config)) {
-          if(msg.guild.available && !config.servers.includes(msg.guild.id)) {
-            config.servers.push(msg.guild.id);
-            return;
-          }
+  if(checkPrefix(conL, config)) {
+    conL.slice(1); //remove prefix from future edits
+    let params = conL.split(' ');
+    if(params.length >= 0) {
+      //add server to valid list
+      if(param[0] === 'addserver') {
+        if(validAdmin(msg, config) && msg.guild.available && !config.servers.includes(msg.guild.id)) {
+          config.servers.push(msg.guild.id);
+          msg.reply('Server whitelisted! Make sure to run `saveconfig`.');
         }
-
-        if(!validServer(msg, conf)) {
-          return;
-        }
-
-
-        if(!validAdmin(msg, conf)) {
-          return;
-        }
-
-        //remove server from valid list
-        if(param[0] === 'removeserver') {
-          if(msg.guild.available) {
-            config.servers = config.servers.filter(id => msg.guild.id !== id);
-            return;
-          }
-        }
-        
+        return;
       }
+
+      if(!validServer(msg, conf)) {
+        return;
+      }
+      //general commands
+
+
+
+      if(!validAdmin(msg, conf)) {
+        return;
+      }
+      //admin commands
+
+      if(param[0] === 'reloadconfig') {
+        config = getConfig();
+        msg.reply('Config reloaded!');
+        return;
+      }
+
+      if(param[0] === 'saveconfig') {
+        saveConfig(config);
+        msg.reply('Config saved!');
+        return;
+      }
+
+      //remove server from valid list
+      if(param[0] === 'removeserver') {
+        if(msg.guild.available) {
+          config.servers = config.servers.filter(id => msg.guild.id !== id);
+          msg.reply('Server blacklisted! Make sure to run `saveconfig`.');
+        }
+        return;
+      }
+        
     }
-  if (con.startsWith()) {
-    msg.reply('pong');
+  } else {
+    for(let rep of config.responses) {
+      
+    }
   }
 });
 
