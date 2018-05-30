@@ -116,7 +116,7 @@ client.on('message', msg => {
     }
   } else if(msg.author.id !== client.user.id) {
     for(let rep of config.replies) {
-      let con = message.content;
+      let con = msg.content;
       let trig = rep.trigger;
       if(!rep.caseSensitive) {
         con = con.toLowerCase();
