@@ -86,15 +86,13 @@ client.on('message', msg => {
       }
       //general commands
 
-      console.log('hip');
 
       if(!validAdmin(msg, config)) {
         return;
       }
       //admin commands
-      console.log('ho');
+
       if(params[0] === 'reloadconfig') {
-        console.log('here');
         config = getConfig();
         msg.reply('Config reloaded!');
         return;
