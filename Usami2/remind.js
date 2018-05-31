@@ -55,7 +55,7 @@ function remind(msg, params, data, makeEmb) {
     data.reminders[remid].uid = msg.author.id;
     data.reminders[remid].text = params.slice(3).join(' ');
 
-    msg.reply("set a reminder for ${n} ${params[1]} from now.");
+    msg.reply(`set a reminder for ${n} ${params[1]} from now.`);
 }
 
 function repeat(client, data) {
