@@ -6,7 +6,10 @@ function getConfig() {
     try {
         let conf = JSON.parse(fs.readFileSync("config.json", "utf8"));
         let com = {}
-        conf.commands.forEach(c => com[c] = require("./" + c));
+        conf.commands.forEach(c => {
+            com[c] = require("./" + c);
+            delete require.cache[require.resolve("./" + c)];
+        });
         return [conf, com];
     } catch (error) {
         console.log(error);
