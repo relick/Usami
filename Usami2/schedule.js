@@ -19,11 +19,11 @@ function startScheduler(msg, params, data, makeEmb) {
     msg.channel.send(`everyone | ${msg.author.username} wants to schedule a D&D game.`).then(message => message.pin()).catch(console.error);
     msg.channel.send("Please tick this if you can play on Saturday and cross it if you can't.").then(message => {
         data.schedule.msat = message;
-        message.react('✅').then(message => message.react('❌'));
+        message.react('✅').then(msgrct => msgrct.message.react('❌')).catch(console.error);
     }).catch(console.error);
     msg.channel.send("Please tick this if you can play on Sunday and cross it if you can't.").then(message => {
         data.schedule.msun = message;
-        message.react('✅').then(message => message.react('❌'));
+        message.react('✅').then(msgrct => msgrct.message.react('❌')).catch(console.error);
     }).catch(console.error);
 }
 
