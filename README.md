@@ -14,6 +14,9 @@ Rolls ability scores for 5e Dungeons & Dragons using the 4d6kh3 formula.
 This is a pretty specific personal thing, it organises a D&D game for my group by pinging those involved and deciding which campaign we'll be playing, and on which day, based on who can turn up.
 You probably won't find any use for this, just remove it from your `commands` field.
 
+### ~remind {time period} {what to be reminded of}
+Pretty simple. Ask for something to be reminded in minutes, hours, days, weeks, months, or years.
+
 ## Admin Commands
 To use any of these you need to have your id in the `admins` field of `config.json`.
 ### ~addserver
@@ -38,7 +41,8 @@ To use, make a file called `config.json` in the same directory as `main.js` that
     "commands": [
         "help",
         "schedule",
-        "stats"
+        "stats",
+        "remind"
     ],
     "replies": [
         {

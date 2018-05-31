@@ -79,6 +79,20 @@ function makeEmb(msg) {
     return new Discord.RichEmbed().setColor(0x34DB52).setAuthor(client.user.username, client.user.avatarURL);
 }
 
+function repeat() {
+    data.lastsave += 1; //autosave every 10 minutes
+    if(data.lastsave === 10) {
+        saveConfig(config);
+        saveData(data);
+        console.log("Config and data saved.");
+    }
+    for(let c in commands) {
+        if(commands[c].repeat !== undefined) {
+            commands[c].repeat(client, data);
+        }
+    }
+}
+
 client.on("message", msg => {
     let conL = msg.content.toLowerCase();
     if(checkPrefix(conL, config)) {
@@ -215,5 +229,8 @@ var config, commands;
 [config, commands] = getConfig();
 var data = getData();
 data.prefix = config.prefixes[0];
+data.lastsave = 0;
 
 client.login(config.token);
+
+setInterval(repeat, 60000);
