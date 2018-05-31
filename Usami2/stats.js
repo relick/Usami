@@ -1,8 +1,6 @@
 //inclusive both ends
 let rollDice = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-let commands = {message: rollstats};
-
 function rollstats(msg, params, data, makeEmb) {
     let em = makeEmb(msg);
     let rolls = [];
@@ -18,12 +16,9 @@ function rollstats(msg, params, data, makeEmb) {
         }
         rolls[stat_i] -= min;
     }
-    let str = "`";
-    rolls.forEach(r => str = str.concat(`${r} `));
-    str = str.slice(0, -1).concat("`");
     em.setAuthor("5e Stat Rolls", msg.author.avatarURL);
-    em.setDescription(str);
+    em.setDescription('`' + rolls.join(' ') + '`');
     msg.channel.send({embed:em});
 }
 
-module.exports = commands;
+module.exports = {message: rollstats};
