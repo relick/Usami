@@ -65,7 +65,7 @@ function checkPrefix(conL, conf) {
 }
 
 function makeEmb(msg) {
-    return new Discord.RichEmbed({color: 0x34DB52});
+    return new Discord.RichEmbed().setColor(0x34DB52);
 }
 
 client.on('message', msg => {
