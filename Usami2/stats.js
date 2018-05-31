@@ -23,7 +23,7 @@ function rollstats(msg, params, data, makeEmb) {
     str = str.slice(0, -1).concat("`");
     em.setAuthor("5e Stat Rolls", msg.author.avatarURL);
     em.setDescription(str);
-    msg.channel.sendEmbed(em);
+    msg.channel.send({em});
 }
 
 module.exports = commands;
