@@ -33,7 +33,6 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         if(msgrct.message.id === data.schedule.msat.id) {
             if(msgrct.emoji.name === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
-                    console.log(data.schedule.msat.reactions);
                     data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
