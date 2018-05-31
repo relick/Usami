@@ -76,7 +76,7 @@ function checkPrefix(conL, conf) {
 }
 
 function makeEmb(msg) {
-    return new Discord.RichEmbed().setColor(0x34DB52).setAuthor(client.user);
+    return new Discord.RichEmbed().setColor(0x34DB52).setAuthor(client.user.username, client.user.avatarURL);
 }
 
 client.on("message", msg => {
