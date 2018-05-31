@@ -46,6 +46,7 @@ function remind(msg, params, data, makeEmb) {
         return;
     }
 
+    data.reminders[remid] = {};
     data.reminders[remid].date = d;
     data.reminders[remid].channel = msg.channel.id;
     data.reminders[remid].uid = msg.author.id;
