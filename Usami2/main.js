@@ -173,19 +173,19 @@ client.on("message", msg => {
 });
 
 client.on("messageReactionAdd", (msgrct, usr) => {
-    commands.forEach(c => {
-        if(c.messageReactionAdd !== undefined) {
-            c.messageReactionAdd(msgrct, usr, data, makeEmb);
+    for(let c in commands) {
+        if(commands[c].messageReactionAdd !== undefined) {
+            commands[c].messageReactionAdd(msgrct, usr, data, makeEmb);
         }
-    });
+    }
 });
 
 client.on("messageReactionRemove", (msgrct, usr) => {
-    commands.forEach(c => {
-        if(c.messageReactionRemove !== undefined) {
-            c.messageReactionRemove(msgrct, usr, data, makeEmb);
+    for(let c in commands) {
+        if(commands[c].messageReactionRemove !== undefined) {
+            commands[c].messageReactionRemove(msgrct, usr, data, makeEmb);
         }
-    });
+    }
 });
 
 var config, commands;
