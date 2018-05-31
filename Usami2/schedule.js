@@ -1,3 +1,17 @@
+function startup(client, data) {
+    if(data.schedule !== undefined) {
+        data.schedule.msat = client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msat);
+        data.schedule.msun = client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msun);
+    }
+}
+
+function prepToSave(data) {
+    if(data.schedule !== undefined) {
+        data.schedule.msat = data.schedule.msat.id;
+        data.schedule.msun = data.schedule.msun.id;
+    }
+}
+
 function startScheduler(msg, params, data, makeEmb) {
     if(data.schedule === undefined) {
         data.schedule = {};
@@ -16,6 +30,8 @@ function startScheduler(msg, params, data, makeEmb) {
     data.schedule.saturday = {y:[], n:[], u:[]}; //y=can do, n=cannot do, u=unknown, will be reminded later.
     data.schedule.sunday = {y:[], n:[], u:[]};
 
+    data.schedule.mchan = msg.channel.id;
+
     msg.channel.send(`everyone | ${msg.author.username} wants to schedule a D&D game.`).then(message => message.pin()).catch(console.error);
     msg.channel.send("Please tick this if you can play on Saturday and cross it if you can't.").then(message => {
         data.schedule.msat = message;
@@ -28,7 +44,7 @@ function startScheduler(msg, params, data, makeEmb) {
 }
 
 function reactionAdded(msgrct, usr, data, makeEmb) {
-    if(data.schedule !== undefined && data.schedule.active) {
+    if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
         let transferred = false; //if user already clicked a different option
         if(msgrct.message.id === data.schedule.msat.id) {
             if(msgrct.emoji.name === '✅') {
@@ -79,7 +95,7 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
 }
 
 function reactionRemoved(msgrct, usr, data, makeEmb) {
-    if(data.schedule !== undefined && data.schedule.active) {
+    if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
         if(msgrct.message.id === data.schedule.msat.id) {
             if(msgrct.emoji === '✅') {
                 data.schedule.saturday.y.filter(id => id != usr.id);
@@ -96,4 +112,4 @@ function reactionRemoved(msgrct, usr, data, makeEmb) {
     }
 }
 
-module.exports = {message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};
+module.exports = {ready: startup, prepToSave: prepToSave, message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};

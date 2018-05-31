@@ -35,7 +35,13 @@ function getData() {
 
 function saveData(dat) {
     try {
-        fs.writeFileSync("data.json", JSON.stringify(dat, null, "    "), "utf8");
+        let oDat = dat;
+        for(let c in commands) {
+            if(commands[c].prepToSave !== undefined) {
+                commands[c].prepToSave(oDat);
+            }
+        }
+        fs.writeFileSync("data.json", JSON.stringify(oDat, null, "    "), "utf8");
     } catch (error) {
         console.log(error);
         console.log(conf);
@@ -44,6 +50,11 @@ function saveData(dat) {
 }
 
 client.on("ready", () => {
+    for(let c in commands) {
+        if(commands[c].ready !== undefined) {
+            commands[c].ready(client, data);
+        }
+    }
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -65,7 +76,7 @@ function checkPrefix(conL, conf) {
 }
 
 function makeEmb(msg) {
-    return new Discord.RichEmbed().setColor(0x34DB52);
+    return new Discord.RichEmbed().setColor(0x34DB52).setAuthor(client.user);
 }
 
 client.on("message", msg => {
@@ -173,8 +184,11 @@ client.on("message", msg => {
 });
 
 client.on("messageReactionAdd", (msgrct, usr) => {
+    //necessary before discord.js fixes it
     if(usr.id === client.user.id) {
-        return;
+        msgrct.me = true;
+    } else {
+        msgrct.me = false;
     }
     for(let c in commands) {
         if(commands[c].messageReactionAdd !== undefined) {
@@ -184,8 +198,11 @@ client.on("messageReactionAdd", (msgrct, usr) => {
 });
 
 client.on("messageReactionRemove", (msgrct, usr) => {
+    //necessary before discord.js fixes it
     if(usr.id === client.user.id) {
-        return;
+        msgrct.me = true;
+    } else {
+        msgrct.me = false;
     }
     for(let c in commands) {
         if(commands[c].messageReactionRemove !== undefined) {
@@ -197,5 +214,6 @@ client.on("messageReactionRemove", (msgrct, usr) => {
 var config, commands;
 [config, commands] = getConfig();
 var data = getData();
+data.prefix = config.prefixes[0];
 
 client.login(config.token);
