@@ -33,13 +33,13 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         if(msgrct.message.id === data.schedule.msat.id) {
             if(msgrct.emoji === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
-                    data.schedule.msat.reactions.find(emoji => emoji.name === '❌').remove(usr);
+                    data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
                 data.schedule.saturday.y.push(usr.id);
             } else if(msgrct.emoji === '❌') {
                 if(data.schedule.saturday.y.includes(usr.id)) {
-                    data.schedule.msat.reactions.find(emoji => emoji.name === '✅').remove(usr);
+                    data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '✅').remove(usr);
                     transferred = true;
                 }
                 data.schedule.saturday.n.push(usr.id);
@@ -47,13 +47,13 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         } else if(msgrct.message.id === data.schedule.msun.id) {
             if(msgrct.emoji === '✅') {
                 if(data.schedule.sunday.n.includes(usr.id)) {
-                    data.schedule.msun.reactions.find(emoji => emoji.name === '❌').remove(usr);
+                    data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
                 data.schedule.sunday.y.push(usr.id);
             } else if(msgrct.emoji === '❌') {
                 if(data.schedule.sunday.y.includes(usr.id)) {
-                    data.schedule.msun.reactions.find(emoji => emoji.name === '✅').remove(usr);
+                    data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '✅').remove(usr);
                     transferred = true;
                 }
                 data.schedule.sunday.n.push(usr.id);
