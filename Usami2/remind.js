@@ -1,11 +1,11 @@
 function remind(msg, params, data, makeEmb) {
     let remid = msg.author.id + Date.now().toString();
     if(params.length < 3) {
-        msg.reply("You need to specify a reminder time.");
+        msg.reply("you need to specify a reminder time.");
         return;
     }
     if(params.length < 4) {
-        msg.reply("You need to specify a reminder reason.");
+        msg.reply("you need to specify a reminder reason.");
         return;
     }
     let n = parseInt(params[1]);
@@ -13,11 +13,11 @@ function remind(msg, params, data, makeEmb) {
         if(params[1] === "next") {
             n = 1;
         } else {
-            msg.reply(`Parse failed. \`${params[1]}\` is not a number.`);
+            msg.reply(`parse failed. \`${params[1]}\` is not a number.`);
             return;
         }
     } else if(n < 1) {
-        msg.reply(`Parse failed. \`${params[1]}\` needs to be greater than 0.`);
+        msg.reply(`parse failed. \`${params[1]}\` needs to be greater than 0.`);
         return;
     }
     let d = new Date();
@@ -42,7 +42,7 @@ function remind(msg, params, data, makeEmb) {
     } else if(params[2].search(/year[s]?/g) > -1) {
         d.setFullYear(d.getFullYear() + n);
     } else {
-        msg.reply(`Parse failed. \`${params[2]}\` is not a valid timeframe.`);
+        msg.reply(`parse failed. \`${params[2]}\` is not a valid timeframe.`);
         return;
     }
 
@@ -54,6 +54,8 @@ function remind(msg, params, data, makeEmb) {
     data.reminders[remid].channel = msg.channel.id;
     data.reminders[remid].uid = msg.author.id;
     data.reminders[remid].text = params.slice(3).join(' ');
+
+    msg.reply("your reminder has been set.");
 }
 
 function repeat(client, data) {

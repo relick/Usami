@@ -106,7 +106,7 @@ client.on("message", msg => {
             if(params[0] === "addserver" && validAdmin(msg, config)) {
                 if(msg.guild.available && !config.servers.includes(msg.guild.id)) {
                     config.servers.push(msg.guild.id);
-                    msg.reply("Server whitelisted! Make sure to run `saveconfig`.");
+                    msg.reply("server whitelisted! Make sure to run `saveconfig`.");
                 }
                 return;
             }
@@ -114,15 +114,15 @@ client.on("message", msg => {
                 if(params.length > 1) {
                     if(params[1] === "config") {
                         [config, commands] = getConfig();
-                        msg.reply("Config reloaded!");
+                        msg.reply("config reloaded!");
                     } else if(params[1] === "data") {
                         data = getData();
-                        msg.reply("Data reloaded!");
+                        msg.reply("data reloaded!");
                     }
                 } else {
                     [config, commands] = getConfig();
                     data = getData();
-                    msg.reply("Config and data reloaded!");
+                    msg.reply("config and data reloaded!");
                 }
                 return;
             }
@@ -130,15 +130,15 @@ client.on("message", msg => {
                 if(params.length > 1) {
                     if(params[1] === "config") {
                         saveConfig(config);
-                        msg.reply("Config saved!");
+                        msg.reply("config saved!");
                     } else if(params[1] === "data") {
                         saveData(data);
-                        msg.reply("Data saved!");
+                        msg.reply("data saved!");
                     }
                 } else {
                     saveConfig(config);
                     saveData(data);
-                    msg.reply("Config and data saved!");
+                    msg.reply("config and data saved!");
                 }
                 return;
             }
@@ -160,7 +160,7 @@ client.on("message", msg => {
             if(params[0] === "removeserver") {
                 if(msg.guild.available) {
                     config.servers = config.servers.filter(id => msg.guild.id !== id);
-                    msg.reply("Server blacklisted! Make sure to run `saveconfig`.");
+                    msg.reply("server blacklisted! Make sure to run `saveconfig`.");
                 }
                 return;
             }
