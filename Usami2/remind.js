@@ -26,9 +26,9 @@ function remind(msg, params, data, makeEmb) {
     } else if(params[2].search(/hour[s]?/g) > -1) {
         d.setHours(d.getHours() + n);
     } else if(params[2].search(/day[s]?/g) > -1) {
-        d.setDays(d.getDate() + n);
+        d.setDate(d.getDate() + n);
     } else if(params[2].search(/week[s]?/g) > -1) {
-        d.setDays(d.getDate() + n*7);
+        d.setDate(d.getDate() + n*7);
     } else if(params[2].search(/month[s]?/g) > -1) {
         if(d.getDate() < 29) {
             d.setMonth(d.getMonth() + n);
