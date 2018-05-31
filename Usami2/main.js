@@ -85,6 +85,7 @@ function makeEmb(msg) {
 function repeat() {
     data.lastsave += 1; //autosave every 10 minutes
     if(data.lastsave === 10) {
+        data.lastsave = 0;
         saveConfig(config);
         saveData(data);
         console.log("Config and data saved.");
