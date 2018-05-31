@@ -97,7 +97,7 @@ client.on("message", msg => {
     if(checkPrefix(msg.content, config)) {
         let params = msg.content.slice(1).trim().split(/ +/g);
         if(params.length >= 0) {
-            params[0] = params[0].ToLowerCase();
+            params[0] = params[0].toLowerCase();
             //special admin commands to be used on any server
             if(params[0] === "addserver" && validAdmin(msg, config)) {
                 if(msg.guild.available && !config.servers.includes(msg.guild.id)) {
