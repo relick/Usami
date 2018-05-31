@@ -31,14 +31,14 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
     if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
         let transferred = false; //if user already clicked a different option
         if(msgrct.message.id === data.schedule.msat.id) {
-            if(msgrct.emoji === '✅') {
+            if(msgrct.emoji.name === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
                     console.log(data.schedule.msat.reactions);
                     data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
                 data.schedule.saturday.y.push(usr.id);
-            } else if(msgrct.emoji === '❌') {
+            } else if(msgrct.emoji.name === '❌') {
                 if(data.schedule.saturday.y.includes(usr.id)) {
                     data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '✅').remove(usr);
                     transferred = true;
@@ -46,13 +46,13 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
                 data.schedule.saturday.n.push(usr.id);
             }
         } else if(msgrct.message.id === data.schedule.msun.id) {
-            if(msgrct.emoji === '✅') {
+            if(msgrct.emoji.name === '✅') {
                 if(data.schedule.sunday.n.includes(usr.id)) {
                     data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
                 data.schedule.sunday.y.push(usr.id);
-            } else if(msgrct.emoji === '❌') {
+            } else if(msgrct.emoji.name === '❌') {
                 if(data.schedule.sunday.y.includes(usr.id)) {
                     data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '✅').remove(usr);
                     transferred = true;
