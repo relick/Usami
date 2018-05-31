@@ -2,6 +2,8 @@
 This is a bot that does a few bits and pieces for personal use but you can use it too if you want.
 It's structured so that the configuration file defines the available commands (and available replies to things people say), and only works in servers that have been whitelisted by an admin.
 
+Also, in `Legacy Lua Bot` there's a bot written in C++ that runs lua stuff. It runs on an old version of SleepyDiscord so don't expect to be able to get it working, but the code is there for the sake of being able to read it.
+
 ## Available Commands
 Usami will read the `commands` field in `config.json` and then search for `.js` modules with the same name as the commands. It should be fairly easy to add your own command by looking at the `module.exports` from `schedule.js`.
 The ones I've implemented are as follows:
@@ -25,7 +27,8 @@ Saves `config.json` and `data.json`, or only one or the other if a parameter is 
 
 ## Setup
 To use, make a file called `config.json` in the same directory as `main.js` that looks like this:
-```{
+```json
+{
     "token": "your token here",
     "prefixes": "~",
     "admins": [
@@ -62,8 +65,12 @@ To use, make a file called `config.json` in the same directory as `main.js` that
     ]
 }```
 
+For the reply stuff, you need to have all 5 fields as demonstrated above. `requireSpace` means there must be spaces surrounding the trigger (or it's at the start or end) in order for it to work. The other booleans should be self-explantory.
+
 You also need to make a file called `data.json` that looks like this:
-```{}```
+```json
+{}
+```
 
 Then just run with `node main.js`.
 
