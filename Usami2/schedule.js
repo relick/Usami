@@ -1,7 +1,7 @@
 function startup(client, data) {
     if(data.schedule !== undefined) {
-        data.schedule.msat = client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msat);
-        data.schedule.msun = client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msun);
+        client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msat).then(msg => data.schedule.msat = msg).catch(console.error);
+        client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msun).then(msg => data.schedule.msun = msg).catch(console.error);
     }
 }
 
