@@ -46,6 +46,9 @@ function remind(msg, params, data, makeEmb) {
         return;
     }
 
+    if(data.reminders === undefined) {
+        data.reminders = {};
+    }
     data.reminders[remid] = {};
     data.reminders[remid].date = d;
     data.reminders[remid].channel = msg.channel.id;
