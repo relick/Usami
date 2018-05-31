@@ -19,9 +19,11 @@ function rollstats(msg, params, data, makeEmb) {
         rolls[stat_i] -= min;
     }
     let str = "`";
-    rolls.forEach(r => str = str.concat(` ${r}`));
-    str = str.slice(1).concat("`");
+    rolls.forEach(r => str = str.concat(`${r} `));
+    str = str.slice(0, -1).concat("`");
     em.setAuthor("5e Stat Rolls", msg.author.avatarURL);
     em.setDescription(str);
     msg.channel.sendEmbed(em);
 }
+
+module.exports = commands;

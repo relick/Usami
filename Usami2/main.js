@@ -6,7 +6,7 @@ function getConfig() {
     try {
         let conf = JSON.parse(fs.readFileSync('config.json', 'utf8'));
         let com = {}
-        conf.commands.forEach(c => com[c] = require('./'.concat(c)).commands);
+        conf.commands.forEach(c => com[c] = require('./'.concat(c)));
         return [conf, com];
     } catch (error) {
         console.log(error);
