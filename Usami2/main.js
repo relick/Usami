@@ -173,6 +173,9 @@ client.on("message", msg => {
 });
 
 client.on("messageReactionAdd", (msgrct, usr) => {
+    if(usr.id === client.user.id) {
+        return;
+    }
     for(let c in commands) {
         if(commands[c].messageReactionAdd !== undefined) {
             commands[c].messageReactionAdd(msgrct, usr, data, makeEmb);
@@ -181,6 +184,9 @@ client.on("messageReactionAdd", (msgrct, usr) => {
 });
 
 client.on("messageReactionRemove", (msgrct, usr) => {
+    if(usr.id === client.user.id) {
+        return;
+    }
     for(let c in commands) {
         if(commands[c].messageReactionRemove !== undefined) {
             commands[c].messageReactionRemove(msgrct, usr, data, makeEmb);

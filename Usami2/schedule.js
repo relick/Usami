@@ -28,11 +28,9 @@ function startScheduler(msg, params, data, makeEmb) {
 }
 
 function reactionAdded(msgrct, usr, data, makeEmb) {
-    if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
+    if(data.schedule !== undefined && data.schedule.active) {
         let transferred = false; //if user already clicked a different option
         if(msgrct.message.id === data.schedule.msat.id) {
-            console.log(msgrct);
-            console.log(data);
             if(msgrct.emoji.name === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
                     console.log(data.schedule.msat.reactions);
@@ -82,7 +80,7 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
 }
 
 function reactionRemoved(msgrct, usr, data, makeEmb) {
-    if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
+    if(data.schedule !== undefined && data.schedule.active) {
         if(msgrct.message.id === data.schedule.msat.id) {
             if(msgrct.emoji === '✅') {
                 data.schedule.saturday.y.filter(id => id != usr.id);
