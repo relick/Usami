@@ -19,13 +19,11 @@ function startScheduler(msg, params, data, makeEmb) {
     msg.channel.send(`everyone | ${msg.author.username} wants to schedule a D&D game.`).then(message => message.pin()).catch(console.error);
     msg.channel.send("Please tick this if you can play on Saturday and cross it if you can't.").then(message => {
         data.schedule.msat = message;
-        message.react('✅');
-        message.react('❌');
+        message.react('✅').then(message => message.react('❌'));
     }).catch(console.error);
     msg.channel.send("Please tick this if you can play on Sunday and cross it if you can't.").then(message => {
         data.schedule.msun = message;
-        message.react('✅');
-        message.react('❌');
+        message.react('✅').then(message => message.react('❌'));
     }).catch(console.error);
 }
 
@@ -35,13 +33,13 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         if(msgrct.message.id === data.schedule.msat.id) {
             if(msgrct.emoji === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
-                    data.schedule.msat.reactions.find("emoji", '❌').remove(usr);
+                    data.schedule.msat.reactions.find(emoji => emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
                 data.schedule.saturday.y.push(usr.id);
             } else if(msgrct.emoji === '❌') {
                 if(data.schedule.saturday.y.includes(usr.id)) {
-                    data.schedule.msat.reactions.find("emoji", '✅').remove(usr);
+                    data.schedule.msat.reactions.find(emoji => emoji.name === '✅').remove(usr);
                     transferred = true;
                 }
                 data.schedule.saturday.n.push(usr.id);
@@ -49,13 +47,13 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         } else if(msgrct.message.id === data.schedule.msun.id) {
             if(msgrct.emoji === '✅') {
                 if(data.schedule.sunday.n.includes(usr.id)) {
-                    data.schedule.msun.reactions.find("emoji", '❌').remove(usr);
+                    data.schedule.msun.reactions.find(emoji => emoji.name === '❌').remove(usr);
                     transferred = true;
                 }
                 data.schedule.sunday.y.push(usr.id);
             } else if(msgrct.emoji === '❌') {
                 if(data.schedule.sunday.y.includes(usr.id)) {
-                    data.schedule.msun.reactions.find("emoji", '✅').remove(usr);
+                    data.schedule.msun.reactions.find(emoji => emoji.name === '✅').remove(usr);
                     transferred = true;
                 }
                 data.schedule.sunday.n.push(usr.id);
