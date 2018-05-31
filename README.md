@@ -63,7 +63,8 @@ To use, make a file called `config.json` in the same directory as `main.js` that
             "caseSensitive": false
         }
     ]
-}```
+}
+```
 
 For the reply stuff, you need to have all 5 fields as demonstrated above. `requireSpace` means there must be spaces surrounding the trigger (or it's at the start or end) in order for it to work. The other booleans should be self-explantory.
 
