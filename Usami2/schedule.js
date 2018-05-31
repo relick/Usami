@@ -31,6 +31,8 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
     if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
         let transferred = false; //if user already clicked a different option
         if(msgrct.message.id === data.schedule.msat.id) {
+            console.log(msgrct);
+            console.log(data);
             if(msgrct.emoji.name === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
                     console.log(data.schedule.msat.reactions);
