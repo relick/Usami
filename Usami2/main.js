@@ -66,9 +66,9 @@ function validAdmin(msg, conf) {
     return conf.admins.includes(msg.author.id);
 }
 
-function checkPrefix(conL, conf) {
+function checkPrefix(cont, conf) {
     for(let c of conf.prefixes) {
-        if(conL.startsWith(c)) {
+        if(cont.startsWith(c)) {
             return true;
         }
     }
@@ -94,10 +94,10 @@ function repeat() {
 }
 
 client.on("message", msg => {
-    let conL = msg.content.toLowerCase();
-    if(checkPrefix(conL, config)) {
-        let params = conL.slice(1).trim().split(/ +/g);
+    if(checkPrefix(msg.content, config)) {
+        let params = msg.content.slice(1).trim().split(/ +/g);
         if(params.length >= 0) {
+            params[0] = params[0].ToLowerCase();
             //special admin commands to be used on any server
             if(params[0] === "addserver" && validAdmin(msg, config)) {
                 if(msg.guild.available && !config.servers.includes(msg.guild.id)) {
