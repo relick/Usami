@@ -21,15 +21,15 @@ function remind(msg, params, data, makeEmb) {
         return;
     }
     let d = new Date();
-    if(params[2].search(/minute[s]?/g) > -1) {
+    if(params[2].search(/minute/g) > -1) {
         d.setMinutes(d.getMinutes() + n);
-    } else if(params[2].search(/hour[s]?/g) > -1) {
+    } else if(params[2].search(/hour/g) > -1) {
         d.setHours(d.getHours() + n);
-    } else if(params[2].search(/day[s]?/g) > -1) {
+    } else if(params[2].search(/day/g) > -1) {
         d.setDate(d.getDate() + n);
-    } else if(params[2].search(/week[s]?/g) > -1) {
+    } else if(params[2].search(/week/g) > -1) {
         d.setDate(d.getDate() + n*7);
-    } else if(params[2].search(/month[s]?/g) > -1) {
+    } else if(params[2].search(/month/g) > -1) {
         if(d.getDate() < 29) {
             d.setMonth(d.getMonth() + n);
         } else {
@@ -39,7 +39,7 @@ function remind(msg, params, data, makeEmb) {
                 d.setDate(1-d.getDate());
             }
         }
-    } else if(params[2].search(/year[s]?/g) > -1) {
+    } else if(params[2].search(/year?/g) > -1) {
         d.setFullYear(d.getFullYear() + n);
     } else {
         msg.reply(`parse failed. \`${params[2]}\` is not a valid timeframe.`);
@@ -55,7 +55,7 @@ function remind(msg, params, data, makeEmb) {
     data.reminders[remid].uid = msg.author.id;
     data.reminders[remid].text = params.slice(3).join(' ');
 
-    msg.reply(`set a reminder for ${n} ${params[2]} from now.`);
+    msg.reply(`I have set a reminder for ${n} ${params[2]} from now.`);
 }
 
 function repeat(client, data) {
