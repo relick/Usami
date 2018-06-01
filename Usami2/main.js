@@ -88,7 +88,7 @@ function repeat() {
         data.lastsave = 0;
         saveConfig(config);
         saveData(data);
-        console.log("Config and data saved.");
+        //console.log("Config and data saved.");
     }
     for(let c in commands) {
         if(commands[c].repeat !== undefined) {
