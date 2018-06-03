@@ -22,7 +22,7 @@ function saveConfig(conf) {
         fs.writeFileSync("config.json", JSON.stringify(conf, null, "    "), "utf8");
     } catch (error) {
         console.log(error);
-        console.log(conf);
+        console.log(config);
         process.exit(1);
     }
 }
@@ -47,7 +47,7 @@ function saveData(dat) {
         fs.writeFileSync("data.json", JSON.stringify(oDat, null, "    "), "utf8");
     } catch (error) {
         console.log(error);
-        console.log(conf);
+        console.log(config);
         process.exit(1);
     }
 }

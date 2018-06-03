@@ -5,10 +5,10 @@ function startup(client, data) {
     }
 }
 
-function prepToSave(data) {
-    if(data.schedule !== undefined) {
-        data.schedule.msat = data.schedule.msat.id;
-        data.schedule.msun = data.schedule.msun.id;
+function prepToSave(dat) {
+    if(dat.schedule !== undefined) {
+        dat.schedule.msat = dat.schedule.msat.id;
+        dat.schedule.msun = dat.schedule.msun.id;
     }
 }
 
