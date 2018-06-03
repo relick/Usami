@@ -1,16 +1,16 @@
 function startup(client, data) {
     if(data.schedule !== undefined) {
-        client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msat).then(msg => data.schedule.msat = msg).catch(console.error);
-        client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msun).then(msg => data.schedule.msun = msg).catch(console.error);
+        client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msatid).then(msg => data.schedule.msat = msg).catch(console.error);
+        client.channels.get(data.schedule.mchan).fetchMessage(data.schedule.msunid).then(msg => data.schedule.msun = msg).catch(console.error);
     }
 }
 
-function prepToSave(dat) {
+/*function prepToSave(dat) {
     if(dat.schedule !== undefined) {
         dat.schedule.msat = dat.schedule.msat.id;
         dat.schedule.msun = dat.schedule.msun.id;
     }
-}
+}*/
 
 function startScheduler(msg, params, data, makeEmb) {
     if(data.schedule === undefined) {
@@ -35,10 +35,12 @@ function startScheduler(msg, params, data, makeEmb) {
     msg.channel.send(`@everyone | ${msg.author.username} wants to schedule a D&D game.`).then(message => message.pin()).catch(console.error);
     msg.channel.send("Please tick this if you can play on Saturday and cross it if you can't.").then(message => {
         data.schedule.msat = message;
+        data.schedule.msatid = message.id;
         message.react('✅').then(msgrct => msgrct.message.react('❌').then(msgrct => msgrct.message.react('❓')).catch(console.error)).catch(console.error);
     }).catch(console.error);
     msg.channel.send("Please tick this if you can play on Sunday and cross it if you can't.").then(message => {
         data.schedule.msun = message;
+        data.schedule.msunid = message.id;
         message.react('✅').then(msgrct => msgrct.message.react('❌').then(msgrct => msgrct.message.react('❓')).catch(console.error)).catch(console.error);
     }).catch(console.error);
 }
@@ -46,7 +48,7 @@ function startScheduler(msg, params, data, makeEmb) {
 function reactionAdded(msgrct, usr, data, makeEmb) {
     if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
         let transferred = false; //if user already clicked a different option
-        if(msgrct.message.id === data.schedule.msat.id) {
+        if(msgrct.message.id === data.schedule.msatid) {
             if(msgrct.emoji.name === '✅') {
                 if(data.schedule.saturday.n.includes(usr.id)) {
                     data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
@@ -60,7 +62,7 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
                 }
                 data.schedule.saturday.n.push(usr.id);
             }
-        } else if(msgrct.message.id === data.schedule.msun.id) {
+        } else if(msgrct.message.id === data.schedule.msunid) {
             if(msgrct.emoji.name === '✅') {
                 if(data.schedule.sunday.n.includes(usr.id)) {
                     data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);

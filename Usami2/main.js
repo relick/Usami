@@ -36,15 +36,22 @@ function getData() {
     }
 }
 
+function replacer(key, value) {
+    // Filtering out properties
+    if (typeof value === 'Message') {
+      return undefined;
+    }
+    return value;
+  }
+
 function saveData(dat) {
     try {
-        let oDat = dat;
-        for(let c in commands) {
+        /*for(let c in commands) {
             if(commands[c].prepToSave !== undefined) {
                 commands[c].prepToSave(oDat);
             }
-        }
-        fs.writeFileSync("data.json", JSON.stringify(oDat, null, "    "), "utf8");
+        }*/
+        fs.writeFileSync("data.json", JSON.stringify(dat, replacer, "    "), "utf8");
     } catch (error) {
         console.log(error);
         console.log(config);
