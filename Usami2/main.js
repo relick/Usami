@@ -58,12 +58,16 @@ function saveData(dat) {
     }
 }
 
-client.on("ready", () => {
+function readyDispatch() {
     for(let c in commands) {
         if(commands[c].ready !== undefined) {
             commands[c].ready(client, data);
         }
     }
+}
+
+client.on("ready", () => {
+    readyDispatch();
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -130,6 +134,7 @@ client.on("message", msg => {
                     data = getData();
                     msg.reply("config and data reloaded!");
                 }
+                readyDispatch();
                 return;
             }
             if(params[0] === "save" && validAdmin(msg, config)) {
