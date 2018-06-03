@@ -38,6 +38,7 @@ function getData() {
 
 function replacer(key, value) {
     // Filtering out properties
+    console.log(typeof value);
     if (typeof value === 'Message') {
       return undefined;
     }
