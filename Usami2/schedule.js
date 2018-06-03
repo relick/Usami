@@ -6,7 +6,7 @@ function startup(client, data) {
 }
 
 function replacer(key, value) {
-    if (value instanceof Message) {
+    if (value.constructor.name === "Message") {
       return undefined;
     }
     return value;
