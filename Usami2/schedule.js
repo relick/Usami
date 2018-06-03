@@ -5,12 +5,12 @@ function startup(client, data) {
     }
 }
 
-/*function prepToSave(dat) {
-    if(dat.schedule !== undefined) {
-        dat.schedule.msat = dat.schedule.msat.id;
-        dat.schedule.msun = dat.schedule.msun.id;
+function replacer(key, value) {
+    if (value instanceof Message) {
+      return undefined;
     }
-}*/
+    return value;
+}
 
 function startScheduler(msg, params, data, makeEmb) {
     if(data.schedule === undefined) {
@@ -114,4 +114,4 @@ function reactionRemoved(msgrct, usr, data, makeEmb) {
     }
 }
 
-module.exports = {ready: startup, /*prepToSave: prepToSave,*/ message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};
+module.exports = {ready: startup, replacer: replacer, message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};

@@ -38,20 +38,18 @@ function getData() {
 
 function replacer(key, value) {
     // Filtering out properties
-    console.log(typeof value);
-    if (typeof value === 'Message') {
-      return undefined;
+    for(let c in commands) {
+        if(commands[c].replacer !== undefined) {
+            if(commands[c].replacer(key, value) === undefined) {
+                return undefined;
+            }
+        }
     }
     return value;
   }
 
 function saveData(dat) {
     try {
-        /*for(let c in commands) {
-            if(commands[c].prepToSave !== undefined) {
-                commands[c].prepToSave(oDat);
-            }
-        }*/
         fs.writeFileSync("data.json", JSON.stringify(dat, replacer, "    "), "utf8");
     } catch (error) {
         console.log(error);
