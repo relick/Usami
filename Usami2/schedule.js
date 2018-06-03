@@ -114,4 +114,4 @@ function reactionRemoved(msgrct, usr, data, makeEmb) {
     }
 }
 
-module.exports = {ready: startup, prepToSave: prepToSave, message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};
+module.exports = {ready: startup, /*prepToSave: prepToSave,*/ message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};
