@@ -190,7 +190,7 @@ client.on("message", msg => {
             if(rep.requireSpace) {
                 trig = trig + ' ';
             }
-            if(con.startsWith(rep.trigger)) {
+            if(con.startsWith(trig)) {
                 msg.channel.send(rep.reply);
                 continue;
             }
