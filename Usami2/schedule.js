@@ -20,7 +20,7 @@ function startScheduler(msg, params, data, makeEmb) {
     if(params.length > 1) {
         data.schedule.numplayers = params[1];
     } else {
-        data.schedule.numplayers = 6;
+        data.schedule.numplayers = 5;
     }
     if(params.length > 2) {
         data.schedule.spareteam = params[2];
