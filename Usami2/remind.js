@@ -8,6 +8,14 @@ function remind(msg, params, data, makeEmb) {
         msg.reply("you need to specify a reminder reason.");
         return;
     }
+
+    /* Accept "~remind me 2 hours" as well */
+    const maybeMe = params[1];
+    if (maybeMe === 'me') {
+        /* Remove the 'me' element if it's "me". */
+        params.splice(1, 1);
+    }
+
     let n = parseInt(params[1]);
     if(isNaN(n)) {
         if(params[1] === "next") {
@@ -21,6 +29,7 @@ function remind(msg, params, data, makeEmb) {
         return;
     }
     let d = new Date();
+    
     if(params[2].search(/minute/g) > -1) {
         d.setMinutes(d.getMinutes() + n);
     } else if(params[2].search(/hour/g) > -1) {
