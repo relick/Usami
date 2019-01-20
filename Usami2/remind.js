@@ -29,8 +29,7 @@ function remind(msg, params, data, makeEmb) {
         return;
     }
     let d = new Date();
-    
-    if(params[2].search(/minute/g) > -1) {
+    if(params[2].search(/min/g) > -1) {
         d.setMinutes(d.getMinutes() + n);
     } else if(params[2].search(/hour/g) > -1) {
         d.setHours(d.getHours() + n);
