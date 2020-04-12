@@ -1,6 +1,6 @@
 function initxp() {
     if(data.xp === undefined) {
-        data.xp = { currentXP = 14000 };
+        data.xp = { "currentXP": 14000 };
     }
 }
 
