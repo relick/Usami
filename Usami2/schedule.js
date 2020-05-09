@@ -81,14 +81,14 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         let total = s.sunday.y.length + s.sunday.n.length + s.saturday.y.length + s.saturday.n.length;
         if(!transferred && total >= s.numplayers*2) {
             let str = "@everyone | Not enough players for a game. :frowning:";
-            if(s.sunday.y.length >= s.numplayers) {
-                str = "@everyone | Team 1, Sunday, 11am GMT.";
-            } else if(s.saturday.y.length >= s.numplayers) {
+            if(s.saturday.y.length >= s.numplayers) {
                 str = "@everyone | Team 1, Saturday, 11am GMT.";
-            } else if(s.sunday.y.length >= 4) {
-                str = `@everyone | Team ${s.spareteam}, Sunday, 11am GMT.`;
+            } else if(s.sunday.y.length >= s.numplayers) {
+                str = "@everyone | Team 1, Sunday, 11am GMT.";
             } else if(s.saturday.y.length >= 4) {
                 str = `@everyone | Team ${s.spareteam}, Saturday, 11am GMT.`;
+            } else if(s.sunday.y.length >= 4) {
+                str = `@everyone | Team ${s.spareteam}, Sunday, 11am GMT.`;
             }
             msgrct.message.channel.send(str).then(message => message.pin()).catch(console.error);
             data.schedule.active = false;
