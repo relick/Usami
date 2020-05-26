@@ -69,7 +69,7 @@ function remind(msg, params, data, makeEmb) {
 function repeat(client, data) {
     for(let c in data.reminders) {
         if(new Date(data.reminders[c].date) < new Date()) {
-            client.channels.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>! ${data.reminders[c].text}`);
+            client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>! ${data.reminders[c].text}`);
             delete data.reminders[c];
         }
     }

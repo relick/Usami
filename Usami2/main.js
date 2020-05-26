@@ -89,7 +89,7 @@ function checkPrefix(cont, conf) {
 }
 
 function makeEmb(msg) {
-    return new Discord.RichEmbed().setColor(0x34DB52).setAuthor(client.user.username, client.user.avatarURL);
+    return new Discord.MessageEmbed().setColor(0x34DB52).setAuthor(client.user.username, client.user.avatarURL());
 }
 
 function repeat() {

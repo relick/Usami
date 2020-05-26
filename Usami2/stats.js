@@ -16,7 +16,7 @@ function rollstats(msg, params, data, makeEmb) {
         }
         rolls[stat_i] -= min;
     }
-    em.setAuthor("5e Stat Rolls", msg.author.avatarURL);
+    em.setAuthor("5e Stat Rolls", msg.author.avatarURL());
     em.setDescription('`' + rolls.join(' ') + '`');
     msg.channel.send({embed:em});
 }
