@@ -53,7 +53,7 @@ function saveData(dat) {
         fs.writeFileSync("data.json", JSON.stringify(dat, replacer, "    "), "utf8");
     } catch (error) {
         console.log(error);
-        console.log(config);
+        console.log(dat);
         process.exit(1);
     }
 }

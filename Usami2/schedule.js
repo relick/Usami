@@ -6,7 +6,8 @@ function startup(client, data) {
 }
 
 function replacer(key, value) {
-    if (value.constructor.name === "Message") {
+    // don't save the messages, we can't stringify them
+    if (key === "msat" || key === "msun") {
       return undefined;
     }
     return value;
