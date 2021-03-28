@@ -1,16 +1,55 @@
+const { deflateSync } = require("node:zlib");
+
+const REACT_LIST = [
+    '✅', // can do
+    '❌', // cannot do
+    '🤷‍♀️' // can do but don't prefer
+];
+
+const REACT_OPTIONS = REACT_LIST.reduce((m, r, i) => m[r] = i, {});
+
+let s_waitingOnReactionRemoval = 0
+
 function startup(client, data) {
     if(data.schedule !== undefined) {
-        client.channels.cache.get(data.schedule.mchan).messages.fetch(data.schedule.msatid).then(msg => data.schedule.msat = msg).catch(console.error);
-        client.channels.cache.get(data.schedule.mchan).messages.fetch(data.schedule.msunid).then(msg => data.schedule.msun = msg).catch(console.error);
+        client.channels.cache.get(data.schedule.scheduleChannelID).messages.fetch(data.schedule.saturday.messageID).then(msg => data.schedule.saturday.message = msg).catch(console.error);
+        client.channels.cache.get(data.schedule.scheduleChannelID).messages.fetch(data.schedule.sunday.messageID).then(msg => data.schedule.sunday.message = msg).catch(console.error);
     }
 }
 
 function replacer(key, value) {
     // don't save the messages, we can't stringify them
-    if (key === "msat" || key === "msun") {
+    if (key === "message") {
       return undefined;
     }
     return value;
+}
+
+function addReactions(message, i = 0)
+{
+    if(i < REACT_LIST.length)
+    {
+        message.react(REACT_LIST[i]).then(msgrct => addReactions(msgrct.message, i + 1)).catch(console.error);
+    }
+}
+
+function getDayFromMessageID(data, message)
+{
+    return (message.id === data.schedule.saturday.messageID)
+    ? data.schedule.saturday
+    : (message.id === data.schedule.sunday.messageID)
+        ? data.schedule.sunday
+        : null;
+}
+
+function createSelectionsLists()
+{
+    let selections = {};
+    for(let react in REACT_OPTIONS)
+    {
+        selections[react] = [];
+    }
+    return selections;
 }
 
 function startScheduler(msg, params, data, makeEmb) {
@@ -18,101 +57,148 @@ function startScheduler(msg, params, data, makeEmb) {
         data.schedule = {};
     }
     data.schedule.active = true;
-    if(params.length > 1) {
-        data.schedule.numplayers = params[1];
-    } else {
-        data.schedule.numplayers = 5;
-    }
-    if(params.length > 2) {
-        data.schedule.spareteam = params[2];
-    } else {
-        data.schedule.spareteam = 'N';
-    }
-    data.schedule.saturday = {y:[], n:[], u:[]}; //y=can do, n=cannot do, u=unknown, will be reminded later.
-    data.schedule.sunday = {y:[], n:[], u:[]};
+    data.schedule.saturday = { selections:createSelectionsLists() };
+    data.schedule.sunday = { selections:createSelectionsLists() };
 
-    data.schedule.mchan = msg.channel.id;
+    // set a reminder schedule for midday friday
+    let remindDate = new Date();
+    if(remindDate.getDay() == 6)
+    {
+        remindDate.setDate(remindDate.getDate() + 6);
+    }
+    else
+    {
+        remindDate.setDate(remindDate.getDate() + (5 - remindDate.getDay()));
+    }
+    remindDate.setHours(12, 0, 0);
+    data.schedule.remindDate = remindDate;
+
+    data.schedule.scheduleChannelID = msg.channel.id;
 
     msg.channel.send(`@everyone | ${msg.author.username} wants to schedule a D&D game.`).then(message => message.pin()).catch(console.error);
-    msg.channel.send("Please tick this if you can play on Saturday and cross it if you can't.").then(message => {
-        data.schedule.msat = message;
-        data.schedule.msatid = message.id;
-        message.react('✅').then(msgrct => msgrct.message.react('❌').then(msgrct => msgrct.message.react('❓')).catch(console.error)).catch(console.error);
+    msg.channel.send("Please specify preference for Saturday.").then(message => {
+        data.schedule.saturday.message = message;
+        data.schedule.saturday.messageID = message.id;
+        addReactions(message);
     }).catch(console.error);
-    msg.channel.send("Please tick this if you can play on Sunday and cross it if you can't.").then(message => {
-        data.schedule.msun = message;
-        data.schedule.msunid = message.id;
-        message.react('✅').then(msgrct => msgrct.message.react('❌').then(msgrct => msgrct.message.react('❓')).catch(console.error)).catch(console.error);
+    msg.channel.send("Please specify preference for Sunday.").then(message => {
+        data.schedule.sunday.message = message;
+        data.schedule.sunday.messageID = message.id;
+        addReactions(message);
     }).catch(console.error);
 }
 
 function reactionAdded(msgrct, usr, data, makeEmb) {
     if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
-        let transferred = false; //if user already clicked a different option
-        if(msgrct.message.id === data.schedule.msatid) {
-            if(msgrct.emoji.name === '✅') {
-                if(data.schedule.saturday.n.includes(usr.id)) {
-                    data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
-                    transferred = true;
+        let message = msgrct.message;
+        let day = getDayFromMessageID(data, message);
+        const thisReact = msgrct.emoji.name;
+
+        if(day !== null && REACT_OPTIONS[thisReact] !== undefined)
+        {
+            // check if user already selected another option and remove it if so
+            for(let react in day.selections)
+            {
+                if(react != thisReact && day.selections[react].includes(usr.id))
+                {
+                    message.reactions.resolve(react).users.remove(usr);
+                    s_waitingOnReactionRemoval += 1;
                 }
-                data.schedule.saturday.y.push(usr.id);
-            } else if(msgrct.emoji.name === '❌') {
-                if(data.schedule.saturday.y.includes(usr.id)) {
-                    data.schedule.msat.reactions.find(msgrct => msgrct.emoji.name === '✅').remove(usr);
-                    transferred = true;
-                }
-                data.schedule.saturday.n.push(usr.id);
             }
-        } else if(msgrct.message.id === data.schedule.msunid) {
-            if(msgrct.emoji.name === '✅') {
-                if(data.schedule.sunday.n.includes(usr.id)) {
-                    data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '❌').remove(usr);
-                    transferred = true;
-                }
-                data.schedule.sunday.y.push(usr.id);
-            } else if(msgrct.emoji.name === '❌') {
-                if(data.schedule.sunday.y.includes(usr.id)) {
-                    data.schedule.msun.reactions.find(msgrct => msgrct.emoji.name === '✅').remove(usr);
-                    transferred = true;
-                }
-                data.schedule.sunday.n.push(usr.id);
-            }
-        }
-        let s = data.schedule;
-        let total = s.sunday.y.length + s.sunday.n.length + s.saturday.y.length + s.saturday.n.length;
-        if(!transferred && total >= s.numplayers*2) {
-            let str = "@everyone | Not enough players for a game. :frowning:";
-            if(s.saturday.y.length >= s.numplayers) {
-                str = "@everyone | Team 1, Saturday, 11am GMT.";
-            } else if(s.sunday.y.length >= s.numplayers) {
-                str = "@everyone | Team 1, Sunday, 11am GMT.";
-            } else if(s.saturday.y.length >= 4) {
-                str = `@everyone | Team ${s.spareteam}, Saturday, 11am GMT.`;
-            } else if(s.sunday.y.length >= 4) {
-                str = `@everyone | Team ${s.spareteam}, Sunday, 11am GMT.`;
-            }
-            msgrct.message.channel.send(str).then(message => message.pin()).catch(console.error);
-            data.schedule.active = false;
+
+            // then add the new selection
+            day.selections[thisReact].push(usr.id);
         }
     }
 }
 
 function reactionRemoved(msgrct, usr, data, makeEmb) {
     if(data.schedule !== undefined && data.schedule.active && !msgrct.me) {
-        if(msgrct.message.id === data.schedule.msat.id) {
-            if(msgrct.emoji === '✅') {
-                data.schedule.saturday.y.filter(id => id != usr.id);
-            } else if(msgrct.emoji === '❌') {
-                data.schedule.saturday.n.filter(id => id != usr.id);
-            }
-        } else if(msgrct.message.id === data.schedule.msun.id) {
-            if(msgrct.emoji === '✅') {
-                data.schedule.sunday.y.filter(id => id != usr.id);
-            } else if(msgrct.emoji === '❌') {
-                data.schedule.sunday.n.filter(id => id != usr.id);
+        let day = getDayFromMessageID(data, msgrct.message);
+        const thisReact = msgrct.emoji.name;
+
+        if(day !== null && REACT_OPTIONS[thisReact] !== undefined)
+        {
+            // remove user from selection
+            day.selections[thisReact].filter(id => id != usr.id);
+            if(s_waitingOnReactionRemoval > 0)
+            {
+                s_waitingOnReactionRemoval -= 1;
             }
         }
     }
 }
 
-module.exports = {ready: startup, replacer: replacer, message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved};
+function repeat(client, data, config) {
+    if(data.schedule !== undefined && data.schedule.active && s_waitingOnReactionRemoval === 0)
+    {
+        let s = data.schedule;
+        if(!s.reminded && new Date(s.remindDate) < new Date()) {
+            for(let user of config.scheduleUsers)
+            {
+                let userVotedSaturday = false;
+                for(let reactList in s.saturday.selections)
+                {
+                    if(reactList.includes(user))
+                    {
+                        userVotedSaturday = true;
+                        break;
+                    }
+                }
+
+                let userVotedSunday = false;
+                for(let reactList in s.sunday.selections)
+                {
+                    if(reactList.includes(user))
+                    {
+                        userVotedSunday = true;
+                        break;
+                    }
+                }
+                
+                if(!userVotedSaturday || !userVotedSunday)
+                {
+                    client.channels.cache.get(s.scheduleChannelID).send(`<@${user}>! This is a reminder that you need to mark when you are free for D&D :junnapray:.`);
+                }
+            }
+            s.reminded = true;
+        }
+
+        const numPlayers = config.scheduleUsers.length;
+        const saturdayTotal = s.saturday.selections.reduce((total, userList) => total += userList.length, 0);
+        const sundayTotal = s.sunday.selections.reduce((total, userList) => total += userList.length, 0);
+
+        if(saturdayTotal >= numPlayers && sundayTotal >= numPlayers)
+        {
+            const sundayFullSupportNum = s.sunday.selections['✅'].length;
+            const saturdayFullSupportNum = s.saturday.selections['✅'].length;
+            const sundayHasEnoughSupport = (sundayFullSupport + s.sunday.selections['🤷‍♀️'].length) === numPlayers;
+            const saturdayHasEnoughSupport = (saturdayFullSupport + s.saturday.selections['🤷‍♀️'].length) === numPlayers;
+
+            let str = "@everyone | Not enough players for a session :frowning:.";
+            if(sundayFullSupportNum === numPlayers)
+            {
+                str = "@everyone | We will play Sunday 12pm (unanimous).";
+            }
+            else if(saturdayFullSupportNum === numPlayers)
+            {
+                str = "@everyone | We will play Saturday 12pm (unanimous).";
+            }
+            else if(sundayHasEnoughSupport || saturdayHasEnoughSupport)
+            {
+                if(!saturdayHasEnoughSupport || (sundayHasEnoughSupport && sundayFullSupportNum >= saturdayFullSupportNum))
+                {
+                    str = "@everyone | We will play Sunday 12pm (by preference).";
+                }
+                else
+                {
+                    str = "@everyone | We will play Saturday 12pm (by preference).";
+                }
+            }
+            message.channel.send(str).then(message => message.pin()).catch(console.error);
+            s.active = false;
+        }
+    }
+}
+
+module.exports = {ready: startup, replacer: replacer, message: startScheduler, messageReactionAdd: reactionAdded, messageReactionRemove: reactionRemoved, repeat: repeat};

@@ -66,7 +66,7 @@ function remind(msg, params, data, makeEmb) {
     msg.reply(`I have set a reminder for ${n} ${params[2]} from now.`);
 }
 
-function repeat(client, data) {
+function repeat(client, data, config) {
     for(let c in data.reminders) {
         if(new Date(data.reminders[c].date) < new Date()) {
             client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>! ${data.reminders[c].text}`);

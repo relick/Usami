@@ -102,7 +102,7 @@ function repeat() {
     }
     for(let c in commands) {
         if(commands[c].repeat !== undefined) {
-            commands[c].repeat(client, data);
+            commands[c].repeat(client, data, config);
         }
     }
 }
