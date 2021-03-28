@@ -4,7 +4,7 @@ const REACT_LIST = [
     '🤷‍♀️' // can do but don't prefer
 ];
 
-const REACT_OPTIONS = REACT_LIST.reduce((m, r, i) => m[r] = i, {});
+const REACT_OPTIONS = new Set(REACT_LIST);
 
 let s_waitingOnReactionRemoval = 0
 
@@ -33,20 +33,17 @@ function addReactions(message, i = 0)
 
 function getDayFromMessageID(data, message)
 {
-    return (message.id === data.schedule.saturday.messageID)
-    ? data.schedule.saturday
-    : (message.id === data.schedule.sunday.messageID)
-        ? data.schedule.sunday
-        : null;
+    if (message.id === data.schedule.saturday.messageID) {
+        return data.schedule.saturday;
+    } else if (message.id === data.schedule.sunday.messageID) {
+        return data.schedule.sunday;
+    }
 }
 
 function createSelectionsLists()
 {
     let selections = {};
-    for(let react in REACT_OPTIONS)
-    {
-        selections[react] = [];
-    }
+    REACT_OPTIONS.forEach(option => selections[option] = []);
     return selections;
 }
 
@@ -92,7 +89,7 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         let day = getDayFromMessageID(data, message);
         const thisReact = msgrct.emoji.name;
 
-        if(day !== null && REACT_OPTIONS[thisReact] !== undefined)
+        if(day !== null && REACT_OPTIONS.has(thisReact))
         {
             // check if user already selected another option and remove it if so
             for(let react in day.selections)
@@ -115,7 +112,7 @@ function reactionRemoved(msgrct, usr, data, makeEmb) {
         let day = getDayFromMessageID(data, msgrct.message);
         const thisReact = msgrct.emoji.name;
 
-        if(day !== null && REACT_OPTIONS[thisReact] !== undefined)
+        if(day !== null && REACT_OPTIONS.has(thisReact))
         {
             // remove user from selection
             day.selections[thisReact].filter(id => id != usr.id);
