@@ -1,5 +1,3 @@
-const { deflateSync } = require("node:zlib");
-
 const REACT_LIST = [
     '✅', // can do
     '❌', // cannot do
