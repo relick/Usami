@@ -89,7 +89,7 @@ function reactionAdded(msgrct, usr, data, makeEmb) {
         let day = getDayFromMessageID(data, message);
         const thisReact = msgrct.emoji.name;
 
-        if(day !== null && REACT_OPTIONS.has(thisReact))
+        if(!!day && REACT_OPTIONS.has(thisReact))
         {
             // check if user already selected another option and remove it if so
             for(let react in day.selections)
@@ -112,7 +112,7 @@ function reactionRemoved(msgrct, usr, data, makeEmb) {
         let day = getDayFromMessageID(data, msgrct.message);
         const thisReact = msgrct.emoji.name;
 
-        if(day !== null && REACT_OPTIONS.has(thisReact))
+        if(!!day && REACT_OPTIONS.has(thisReact))
         {
             // remove user from selection
             day.selections[thisReact].filter(id => id != usr.id);
