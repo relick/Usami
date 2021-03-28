@@ -167,8 +167,8 @@ function repeat(client, data, config) {
         {
             const sundayFullSupportNum = s.sunday.selections['✅'].length;
             const saturdayFullSupportNum = s.saturday.selections['✅'].length;
-            const sundayHasEnoughSupport = (sundayFullSupport + s.sunday.selections['🤷‍♀️'].length) === numPlayers;
-            const saturdayHasEnoughSupport = (saturdayFullSupport + s.saturday.selections['🤷‍♀️'].length) === numPlayers;
+            const sundayHasEnoughSupport = (sundayFullSupportNum + s.sunday.selections['🤷‍♀️'].length) === numPlayers;
+            const saturdayHasEnoughSupport = (saturdayFullSupportNum + s.saturday.selections['🤷‍♀️'].length) === numPlayers;
 
             let str = "@everyone | Not enough players for a session :frowning:.";
             if(sundayFullSupportNum === numPlayers)
