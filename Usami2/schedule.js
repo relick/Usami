@@ -163,8 +163,8 @@ function repeat(client, data, config) {
         }
 
         const numPlayers = config.scheduleUsers.length;
-        const saturdayTotal = s.saturday.selections.reduce((total, userList) => total += userList.length, 0);
-        const sundayTotal = s.sunday.selections.reduce((total, userList) => total += userList.length, 0);
+        const saturdayTotal = Object.values(s.saturday.selections).reduce((total, userList) => total += userList.length, 0);
+        const sundayTotal = Object.values(s.sunday.selections).reduce((total, userList) => total += userList.length, 0);
 
         if(saturdayTotal >= numPlayers && sundayTotal >= numPlayers)
         {
