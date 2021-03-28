@@ -190,7 +190,7 @@ function repeat(client, data, config) {
                     str = "@everyone | We will play Saturday 12pm (by preference).";
                 }
             }
-            message.channel.send(str).then(message => message.pin()).catch(console.error);
+            client.channels.cache.get(s.scheduleChannelID).send(str).then(message => message.pin()).catch(console.error);
             s.active = false;
         }
     }
