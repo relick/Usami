@@ -289,6 +289,6 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 botdata.txt
-Usami2/config.json
-Usami2/data.json
-Usami2/package-lock.json
+Usami3/config.json
+Usami3/data.json
+Usami3/package-lock.json
