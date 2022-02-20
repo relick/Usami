@@ -13,7 +13,7 @@ for (const file of commandFiles) {
 }
 
 for (const macro of macros) {
-	commands.push(new SlashCommandBuilder().setName(macro.trigger).setDescription(macro.reply).toJSON());
+	commands.push(new SlashCommandBuilder().setName(macro.name).setDescription(macro.reply).toJSON());
 }
 
 const rest = new REST({ version: '9' }).setToken(token);

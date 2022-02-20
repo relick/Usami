@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS] });
+const client = new Discord.Client({ intents: [ Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES ] });
 client.userData = { config: require("./config.json"), data: require("./data.json") };
 client.userData.data.lastsave = 0;
 
@@ -15,7 +15,7 @@ for (const file of commandFiles) {
 
 client.macros = new Discord.Collection();
 for (const macro of client.userData.config.macros) {
-	client.macros.set(macro.trigger, macro);
+	client.macros.set(macro.name, macro);
 }
 
 const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
