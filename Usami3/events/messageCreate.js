@@ -3,7 +3,7 @@ function validServer(interaction, config) {
 }
 
 module.exports = {
-	name: 'message',
+	name: 'messageCreate',
 	async execute(data, config, msg) {
 
 		for (const macro of config.macros) {
