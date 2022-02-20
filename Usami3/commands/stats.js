@@ -23,7 +23,7 @@ module.exports = {
 			}
 			rolls[stat_i] -= min;
 		}
-		em.setAuthor({ name: "5e Stat Rolls", iconURL: interaction.author.avatarURL() });
+		em.setAuthor({ name: "5e Stat Rolls", iconURL: interaction.user.avatarURL() });
 		em.setDescription('`' + rolls.join(' ') + '`');
 
 		interaction.reply({ embeds: [em] });
