@@ -1,3 +1,5 @@
+const { MessageEmbed } = require("discord.js");
+
 function validServer(interaction, config) {
 	return interaction.guild.available && config.servers.includes(interaction.guild.id);
 }
@@ -7,7 +9,7 @@ function validAdmin(interaction, config) {
 }
 
 function makeEmb(interaction) {
-	return new Discord.MessageEmbed().setColor(0x34DB52).setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.avatarURL() });
+	return new MessageEmbed().setColor(0x34DB52).setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.avatarURL() });
 }
 
 module.exports = {
