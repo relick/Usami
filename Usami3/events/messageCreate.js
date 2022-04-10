@@ -1,10 +1,10 @@
-function validServer(interaction, config) {
-	return interaction.guild.available && config.servers.includes(interaction.guild.id);
-}
-
 module.exports = {
 	name: 'messageCreate',
 	async execute(data, config, msg) {
+		// Don't respond to self
+		if (msg.author.id === msg.client.user.id) {
+			return;
+		}
 
 		for (const macro of config.macros) {
 			if (macro.trigger) {
