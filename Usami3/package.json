@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "main.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "jasmine",
+		"watch": "nodemon --exec npm test"
 	},
 	"repository": {
 		"type": "git",
@@ -19,7 +20,14 @@
 	"dependencies": {
 		"@discordjs/builders": "^0.5.0",
 		"@discordjs/rest": "^0.1.0-canary.0",
+		"chrono-node": "^2.5.0",
+		"date-fns": "^2.29.3",
 		"discord-api-types": "^0.22.0",
-		"discord.js": "^13.6.0"
+		"discord.js": "^13.6.0",
+		"parse-duration": "^1.0.2"
+	},
+	"devDependencies": {
+		"jasmine": "^4.5.0",
+		"nodemon": "^2.0.20"
 	}
 }
