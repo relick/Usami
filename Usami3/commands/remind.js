@@ -39,7 +39,7 @@ module.exports = {
 		data.reminders[remid].dateSet = now;
 
 		interaction.reply({
-			content: `I have set a reminder for ${friendlyFormat(targetDate, now)}.`,
+			content: `I have set a reminder for ${friendlyFormat(targetDate, now)}. Message is '${data.reminders[remid].text}'`,
 			fetchReply: true
 		})
 		.then((reponseMessage) => data.reminders[remid].remMsgID = reponseMessage.id)
@@ -50,10 +50,10 @@ module.exports = {
 		for (let c in data.reminders) {
 			if (new Date(data.reminders[c].date) < new Date()) {
 				if (data.reminders[c].server !== undefined) {
-					const dateSet = data.reminders[c].dateSet.toLocaleDateString("en-GB", { weekday: "long", year: "numeric", month: "long", day: "numeric", });
+					const dateSet = friendlyFormat(new Date(data.reminders[c].dateSet), new Date());
 					if (data.reminders[c].remMsgID !== undefined) {
 						const linkBack = `${data.reminders[c].server}/${data.reminders[c].channel}/${data.reminders[c].remMsgID}`;
-						client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}> (https://discord.com/channels/${linkBack}, set ${dateSet})! ${data.reminders[c].text}`);
+						client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}> (https://discord.com/channels/${linkBack}, set ${dateSet})! '${data.reminders[c].text}'`);
 					}
 					else {
 						// Missing reply message to link to
