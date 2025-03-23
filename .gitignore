@@ -292,3 +292,5 @@ botdata.txt
 Usami3/config.json
 Usami3/data.json
 Usami3/package-lock.json
+
+**/.vscode/**
