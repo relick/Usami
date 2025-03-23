@@ -39,7 +39,7 @@ module.exports = {
 		data.reminders[remid].dateSet = now;
 
 		interaction.reply({
-			content: `I have set a reminder for ${friendlyFormat(targetDate, now)}. Message is '${data.reminders[remid].text}'`,
+			content: `I have set a reminder for ${friendlyFormat(targetDate, now)}. Message:\n> ${data.reminders[remid].text}`,
 			fetchReply: true
 		})
 		.then((reponseMessage) => data.reminders[remid].remMsgID = reponseMessage.id)
@@ -53,16 +53,16 @@ module.exports = {
 					const dateSet = friendlyFormat(new Date(data.reminders[c].dateSet), new Date());
 					if (data.reminders[c].remMsgID !== undefined) {
 						const linkBack = `${data.reminders[c].server}/${data.reminders[c].channel}/${data.reminders[c].remMsgID}`;
-						client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}> (https://discord.com/channels/${linkBack}, set ${dateSet})! '${data.reminders[c].text}'`);
+						client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>!\n> ${data.reminders[c].text}\nhttps://discord.com/channels/${linkBack} was set ${dateSet}.`);
 					}
 					else {
 						// Missing reply message to link to
-						client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}> (Reminder set ${dateSet})! ${data.reminders[c].text}`);
+						client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>!\n> ${data.reminders[c].text}\nReminder was set ${dateSet}.`);
 					}
 				}
 				else {
 					// Old reminder
-					client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>! ${data.reminders[c].text}`);
+					client.channels.cache.get(data.reminders[c].channel).send(`<@${data.reminders[c].uid}>!\n> ${data.reminders[c].text}`);
 				}
 				delete data.reminders[c];
 			}
