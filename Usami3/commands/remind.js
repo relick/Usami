@@ -32,7 +32,7 @@ module.exports = {
 		}
 		data.reminders[remid] = {};
 		data.reminders[remid].date = targetDate;
-		data.reminders[remid].server = interaction.server.guildId;
+		data.reminders[remid].server = interaction.guild.id;
 		data.reminders[remid].channel = interaction.channel.id;
 		data.reminders[remid].uid = interaction.user.id;
 		data.reminders[remid].text = interaction.options.getString("message");
